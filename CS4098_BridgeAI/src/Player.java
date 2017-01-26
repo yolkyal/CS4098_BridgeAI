@@ -4,9 +4,13 @@ public class Player {
 	private Hand hand;
 	private boolean humanPlayer;
 
-	public Player(int playerID, Hand hand) {
+	public Player(){
+		humanPlayer = false;
+	}
+	
+	public Player(int playerID, boolean humanPlayer) {
 		this.playerID = playerID;
-		this.hand = hand;
+		this.humanPlayer = humanPlayer;
 	}
 
 	public Hand getHand() {
