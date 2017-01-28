@@ -9,14 +9,18 @@ public class Trick {
 	private Player turn_player;
 	private int turn_player_position;
 	private Card winning_card;
-	private Player winning_player;
+	private int winning_player_position;
+	private int turns_played;
 	
-	public Trick(Player[] players, int dummy_position, int leader_position, Suit trump_suit, Suit trick_suit) {
+	public Trick(Player[] players, int dummy_position, int leader_position, Suit trump_suit) {
 		this.players = players;
 		this.dummy = players[dummy_position];
 		this.trump_suit = trump_suit;
-		this.trick_suit = trick_suit;
+		this.trick_suit = null; //Not ascertained until first card is played
 		this.turn_player = players[leader_position];
+		turns_played = 0;
+		winning_card = null;
+		winning_player_position = leader_position;
 	}
 
 	public void playTurn(){
@@ -28,9 +32,7 @@ public class Trick {
 			
 			while(selected_card == null){
 				System.out.print("Choose a card: ");
-				Scanner scanner = new Scanner(System.in);
-				int card_index = scanner.nextInt();
-				scanner.close();
+				int card_index = UserIO.getIntegerInput();
 				
 				if (card_index < 0 || card_index >= turn_hand.getCards().size()){
 					System.out.println("Invalid choice.");
@@ -48,8 +50,7 @@ public class Trick {
 			if (trick_suit == null) options = turn_hand.getCards();
 			else{
 				options = turn_hand.getSuitCards(trick_suit);
-				options.addAll(turn_hand.getSuitCards(trump_suit));
-;			}
+			}
 			if (options.isEmpty()) options = turn_hand.getCards();
 			
 			//Choose random valid card -- this will of course be changed later
@@ -60,18 +61,28 @@ public class Trick {
 		playCard(selected_card);
 		turn_player_position = (turn_player_position + 1) % 4;
 		turn_player = players[turn_player_position];
+		turns_played++;
+	}
+	
+	public boolean isOver(){
+		return turns_played == 4;
 	}
 	
 	private void playCard(Card card){
 		System.out.println(Position.getName(turn_player_position) + " plays " + card.toString());
+		System.out.println();
 		
 		if (isNewWinningCard(card)){
 			winning_card = card;
-			winning_player = turn_player;
+			winning_player_position = turn_player_position;
+			if (trick_suit == null) trick_suit = card.getSuit();
 		}
+		
+		turn_player.getHand().getCards().remove(card);
 	}
 	
 	private boolean isNewWinningCard(Card new_card){
+		if (winning_card == null) return true;
 		if (new_card.getSuit() == winning_card.getSuit()){
 			return new_card.isHigherThan(winning_card);
 		}
@@ -83,6 +94,10 @@ public class Trick {
 		Suit card_suit = card.getSuit();
 		if (card_suit == trick_suit) return true;
 		else return !turn_player.getHand().containsSuit(trick_suit);
+	}
+
+	public int getWinningPlayerPosition() {
+		return winning_player_position;
 	}
 	
 }

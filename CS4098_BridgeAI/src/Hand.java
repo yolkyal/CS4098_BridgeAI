@@ -33,7 +33,7 @@ public class Hand {
 	public void display(){
 		for (int i = 0; i < cards.size(); i++){
 			Card card = cards.get(i);
-			System.out.print(i + ". " + card.toString() + " ");
+			System.out.println(i + ". " + card.toString() + " ");
 		}
 	}
 	

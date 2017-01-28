@@ -12,7 +12,17 @@ public class Position {
 			case 1: return "EAST";
 			case 2: return "SOUTH";
 			case 3: return "WEST";
+			default: return "";
 		}
-		return "";
+	}
+	
+	public static int getOpposite(int pos){
+		switch(pos){
+			case 0: return 2;
+			case 1: return 3;
+			case 2: return 0;
+			case 3: return 1;
+			default: return -1;
+		}
 	}
 }

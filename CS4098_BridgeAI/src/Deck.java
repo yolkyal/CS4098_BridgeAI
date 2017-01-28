@@ -13,7 +13,6 @@ public class Deck {
 				i++;
 			}
 		}
-		this.shuffle();
 	}
 	
 	public void shuffle(){
