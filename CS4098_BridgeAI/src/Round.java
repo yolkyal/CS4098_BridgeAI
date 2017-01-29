@@ -2,7 +2,6 @@
 public class Round {
 	private Player[] players;
 	private Deck deck;
-	private Contract contract;
 	
 	public Round(int numHumanPlayers){
 		players = new Player[4];
@@ -22,8 +21,7 @@ public class Round {
 		deck.deal(players);
 	}
 	
-	public void play(){
-		Contract contract = runAuction();
+	public void play(Contract contract){
 		int tricks_won[] = {0, 0, 0, 0};
 		int leader_pos = contract.getDeclarerPosition();
 		int dummy_pos = Position.getOpposite(contract.getDeclarerPosition());
@@ -43,10 +41,29 @@ public class Round {
 		displayTricksWon(tricks_won);
 	}
 	
-	private Contract runAuction(){
-		//Placeholder of 1NT NORTH contract.
-		Contract contract = new Contract(1, null, Position.NORTH);
-		return contract;
+	public Contract runAuction(int dealer_pos){
+		int bid_pos = dealer_pos;
+		
+		int consec_passes = 0;
+		Contract last_bid = null;
+		while(true){
+			System.out.println("\n" + Position.getName(bid_pos) + " BID");
+			players[bid_pos].getHand().display();
+			Contract contract = UserIO.getBidInput(bid_pos);
+			
+			int value = contract.getNumber();
+			if (value == -1) consec_passes++;
+			else{ 
+				last_bid = contract;
+				consec_passes = 1;
+			}
+			
+			bid_pos = Position.getLeft(bid_pos);
+			if (consec_passes == 4) break;
+		}
+		System.out.println("Final Contract: " + last_bid.toString());
+		
+		return last_bid;
 	}
 	
 	private void displayTricksWon(int[] tricks_won){

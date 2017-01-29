@@ -10,6 +10,13 @@ public class Contract {
 		this.declarerPosition = declarerPosition;
 	}
 	
+	public String toString(){
+		String suit_string;
+		if (suit == null) suit_string = "NT";
+		else suit_string = suit.name();
+		return number + " " + suit_string + " from " + Position.getName(declarerPosition);
+	}
+	
 	public int getNumber() {
 		return number;
 	}

@@ -25,4 +25,8 @@ public class Position {
 			default: return -1;
 		}
 	}
+	
+	public static int getLeft(int pos){
+		return (pos + 1) % 4;
+	}
 }
