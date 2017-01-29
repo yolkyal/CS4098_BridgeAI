@@ -38,6 +38,7 @@ public class Deck {
 				newHand.add(cards[j]);
 			}
 			player.setHand(new Hand(newHand));
+			//System.out.println(player.getHand().getCards().size());
 		}
 	}
 

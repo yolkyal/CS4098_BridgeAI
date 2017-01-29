@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Trick {
 	private Player[] players;
-	private Player dummy;
+	private int dummy_position;
 	private Suit trump_suit;
 	private Suit trick_suit;
 	private Player turn_player;
@@ -14,21 +14,27 @@ public class Trick {
 	
 	public Trick(Player[] players, int dummy_position, int leader_position, Suit trump_suit) {
 		this.players = players;
-		this.dummy = players[dummy_position];
+		this.dummy_position = dummy_position;
 		this.trump_suit = trump_suit;
 		this.trick_suit = null; //Not ascertained until first card is played
 		this.turn_player = players[leader_position];
+		turn_player_position = leader_position;
 		turns_played = 0;
 		winning_card = null;
 		winning_player_position = leader_position;
+		
+		System.out.println(leader_position);
 	}
 
 	public void playTurn(){
 		Hand turn_hand = turn_player.getHand();
 		Card selected_card = null;
 		
-		if (turn_player.isHumanPlayer()){
+		if (turn_player.isHumanPlayer() || turn_player_position == dummy_position && 
+				players[Position.getOpposite(turn_player_position)].isHumanPlayer()){
+			System.out.println(Position.getName(turn_player_position) + " TURN");
 			turn_hand.display();
+			//printAllHands();
 			
 			while(selected_card == null){
 				System.out.print("Choose a card: ");
@@ -62,6 +68,14 @@ public class Trick {
 		turn_player_position = (turn_player_position + 1) % 4;
 		turn_player = players[turn_player_position];
 		turns_played++;
+	}
+	
+	private void printAllHands(){
+		for(int i = 0; i < players.length; i++){
+			System.out.println(i + ": " + Position.getName(i));
+			Player player = players[i];
+			player.getHand().display();
+		}
 	}
 	
 	public boolean isOver(){

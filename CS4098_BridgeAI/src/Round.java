@@ -30,11 +30,12 @@ public class Round {
 		
 		for (int trick_num = 0; trick_num < 13; trick_num++){
 			displayTricksWon(tricks_won);
-			Trick trick = new Trick(players, leader_pos, dummy_pos, contract.getSuit());
+			Trick trick = new Trick(players, dummy_pos, leader_pos, contract.getSuit());
 			while(!trick.isOver()){
 				trick.playTurn();
 			}
 			int winning_player_pos = trick.getWinningPlayerPosition();
+			System.out.println(Position.getName(winning_player_pos) + " wins trick.");
 			tricks_won[winning_player_pos]++;
 			leader_pos = winning_player_pos;
 		}
