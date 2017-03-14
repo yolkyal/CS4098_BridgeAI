@@ -21,8 +21,6 @@ public class Trick {
 		turns_played = 0;
 		winning_card = null;
 		winning_player_position = leader_position;
-		
-		System.out.println(leader_position);
 	}
 
 	public void playTurn(){
@@ -33,7 +31,6 @@ public class Trick {
 				players[Position.getOpposite(turn_player_position)].isHumanPlayer()){
 			System.out.println(Position.getName(turn_player_position) + " TURN");
 			turn_hand.display();
-			//printAllHands();
 			
 			while(selected_card == null){
 				System.out.print("Choose a card: ");
