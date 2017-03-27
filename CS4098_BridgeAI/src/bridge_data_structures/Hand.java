@@ -32,9 +32,20 @@ public class Hand {
 	}
 	
 	public void display(){
-		for (int i = 0; i < cards.size(); i++){
+		for (int i = 0; i < cards.size(); i+=3){
 			Card card = cards.get(i);
-			System.out.println(i + ". " + card.toString() + " ");
+			System.out.print(i + ". " + card.toString() + " ");
+			
+			if ((i + 1) < cards.size()){
+				card = cards.get(i + 1);
+				System.out.print("\t\t" + (i + 1) + ". " + card.toString() + " ");
+			}
+			
+			if ((i + 2) < cards.size()){
+				card = cards.get(i + 2);
+				System.out.print("\t\t" + (i + 2) + ". " + card.toString() + " ");
+			}
+			System.out.println();
 		}
 	}
 	

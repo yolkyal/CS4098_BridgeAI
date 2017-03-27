@@ -18,6 +18,32 @@ public class Contract {
 		return number + " " + suit_string + " from " + Position.getName(declarerPosition);
 	}
 	
+	public boolean isGreaterThan(Contract contract){
+		if (contract == null) return true;
+		
+		if (suit == contract.getSuit())
+			return (number > contract.getNumber());
+		
+		if (this.hasGreaterSuitThan(contract)){
+			return (number >= contract.getNumber());
+		}
+		else 
+			return (number > contract.getNumber());
+	}
+	
+	private boolean hasGreaterSuitThan(Contract contract){
+		//Input contract will never have the same suit
+		
+		if (contract.getSuit() == null) return false;
+		
+		switch(suit){
+			case CLUB: if (contract.getSuit() == Suit.DIAMOND) return false;
+			case DIAMOND: if (contract.getSuit() == Suit.HEART) return false;
+			case HEART: if (contract.getSuit() == Suit.SPADE) return false;
+			default: return true;
+		}
+	}
+	
 	public int getNumber() {
 		return number;
 	}

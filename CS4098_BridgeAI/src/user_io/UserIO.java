@@ -16,9 +16,12 @@ public class UserIO {
 		return x;
 	}
 	
-	public static Contract getBidInput(int player_position){
+	public static Contract getBidInput(int player_position, Contract cur_contract){
 		int value;
 		int suit_num = 4;
+		
+		if (cur_contract != null)
+			System.out.println("Current bid is " + cur_contract.toString());
 		
 		while(true){
 			System.out.print("Enter value (1 to 7), -1 pass: ");

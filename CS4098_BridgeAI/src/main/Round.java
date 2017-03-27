@@ -1,7 +1,6 @@
 package main;
 
 import java.util.ArrayList;
-
 import bridge_data_structures.*;
 import user_io.UserIO;
 
@@ -51,27 +50,43 @@ public class Round {
 		int bid_pos = dealer_pos;
 		
 		int consec_passes = 0;
-		Contract last_bid = null;
+		Contract contract = null;
+		
+		System.out.println("\n" + Position.getName(bid_pos) + " BID");
+		players[bid_pos].getHand().display();
 		while(true){
-			System.out.println("\n" + Position.getName(bid_pos) + " BID");
-			players[bid_pos].getHand().display();
-			Contract contract = UserIO.getBidInput(bid_pos);
 			
-			int value = contract.getNumber();
+			Contract bid = UserIO.getBidInput(bid_pos, contract);
+			
+			int value = bid.getNumber();
 			if (value == -1) consec_passes++;
-			else{ 
-				last_bid = contract;
-				consec_passes = 1;
-				System.out.println(Position.getName(bid_pos) + " bids " + 
-				contract.getNumber() + " "+ contract.getSuit().name());
-			}
-			
-			bid_pos = Position.getLeft(bid_pos);
+			else{	
+				if (bid.isGreaterThan(contract)){
+					consec_passes = 1;
+					
+					if (bid.getSuit() != null){
+						System.out.println(Position.getName(bid_pos) + " bids " + 
+							bid.getNumber() + " "+ bid.getSuit().name());
+					}
+					else{
+						System.out.println(Position.getName(bid_pos) + " bids " + 
+								bid.getNumber() + " "+ "NT");
+					}
+					
+					contract = bid;
+					bid_pos = Position.getLeft(bid_pos);
+					System.out.println("\n" + Position.getName(bid_pos) + " BID");
+					players[bid_pos].getHand().display();
+				}
+				else{
+					System.out.println("This bid is not greater than the working contract.\n");
+				}
+			}	
 			if (consec_passes == 4) break;
 		}
-		System.out.println("Final Contract: " + last_bid.toString());
+		System.out.println("Final Contract: " + contract.toString());
 		
-		return last_bid;
+		return contract;
 	}
 	
 	public void deal(Deck deck, Player[] players){
