@@ -62,6 +62,8 @@ public class Round {
 			else{ 
 				last_bid = contract;
 				consec_passes = 1;
+				System.out.println(Position.getName(bid_pos) + " bids " + 
+				contract.getNumber() + " "+ contract.getSuit().name());
 			}
 			
 			bid_pos = Position.getLeft(bid_pos);
