@@ -1,4 +1,7 @@
+package main;
 import java.util.ArrayList;
+import bridge_data_structures.*;
+import user_io.UserIO;
 
 public class Trick {
 	private Player[] players;
@@ -69,6 +72,7 @@ public class Trick {
 		turns_played++;
 	}
 	
+	@SuppressWarnings("unused")
 	private void printAllHands(){
 		for(int i = 0; i < players.length; i++){
 			System.out.println(i + ": " + Position.getName(i));

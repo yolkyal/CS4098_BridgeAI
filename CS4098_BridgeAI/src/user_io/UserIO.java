@@ -1,4 +1,8 @@
+package user_io;
 import java.util.Scanner;
+
+import bridge_data_structures.Contract;
+import bridge_data_structures.Suit;
 
 public class UserIO {
 	public static Scanner std_in;

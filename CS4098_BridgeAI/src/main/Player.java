@@ -1,3 +1,6 @@
+package main;
+
+import bridge_data_structures.Hand;
 
 public class Player {
 	private int playerID;

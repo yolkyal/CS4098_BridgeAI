@@ -1,3 +1,7 @@
+package main;
+
+import bridge_data_structures.*;
+import user_io.UserIO;
 
 public class BridgeAI {
 	

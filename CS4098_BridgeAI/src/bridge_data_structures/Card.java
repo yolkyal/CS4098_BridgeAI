@@ -1,3 +1,4 @@
+package bridge_data_structures;
 
 public class Card {
 	private CardValue value;

@@ -1,3 +1,4 @@
+package bridge_data_structures;
 
 public class Position {
 	//Essentially an enum but with array-indexable values

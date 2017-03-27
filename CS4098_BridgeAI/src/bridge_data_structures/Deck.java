@@ -1,3 +1,4 @@
+package bridge_data_structures;
 import java.util.ArrayList;
 
 public class Deck {
@@ -27,18 +28,6 @@ public class Deck {
 			cards[i] = al_cards.get(rand);
 			al_cards.remove(rand);
 			i++;
-		}
-	}
-	
-	public void deal(Player[] players){
-		for (int i = 0; i < players.length; i++){
-			Player player = players[i];
-			ArrayList<Card> newHand = new ArrayList<Card>();
-			for (int j = i * 13; j < (i + 1) * 13; j++){
-				newHand.add(cards[j]);
-			}
-			player.setHand(new Hand(newHand));
-			//System.out.println(player.getHand().getCards().size());
 		}
 	}
 

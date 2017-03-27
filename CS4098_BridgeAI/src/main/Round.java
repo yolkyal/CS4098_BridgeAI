@@ -1,3 +1,9 @@
+package main;
+
+import java.util.ArrayList;
+
+import bridge_data_structures.*;
+import user_io.UserIO;
 
 public class Round {
 	private Player[] players;
@@ -18,7 +24,7 @@ public class Round {
 		
 		deck = new Deck();
 		deck.shuffle();
-		deck.deal(players);
+		deal(deck, players);
 	}
 	
 	public void play(Contract contract){
@@ -64,6 +70,19 @@ public class Round {
 		System.out.println("Final Contract: " + last_bid.toString());
 		
 		return last_bid;
+	}
+	
+	public void deal(Deck deck, Player[] players){
+		Card[] cards = deck.getCards();
+		for (int i = 0; i < players.length; i++){
+			Player player = players[i];
+			ArrayList<Card> newHand = new ArrayList<Card>();
+			for (int j = i * 13; j < (i + 1) * 13; j++){
+				newHand.add(cards[j]);
+			}
+			player.setHand(new Hand(newHand));
+			//System.out.println(player.getHand().getCards().size());
+		}
 	}
 	
 	private void displayTricksWon(int[] tricks_won){
