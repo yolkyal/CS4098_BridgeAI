@@ -11,6 +11,10 @@ public class Contract {
 		this.declarerPosition = declarerPosition;
 	}
 	
+	public Contract(String parser_string){
+		
+	}
+	
 	public String toString(){
 		String suit_string;
 		if (suit == null) suit_string = "NT";

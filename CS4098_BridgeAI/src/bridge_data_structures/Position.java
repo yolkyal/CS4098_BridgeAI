@@ -30,4 +30,14 @@ public class Position {
 	public static int getLeft(int pos){
 		return (pos + 1) % 4;
 	}
+	
+	public static int getFromChar(char c){
+		switch(c){
+			case 'N': return Position.NORTH;
+			case 'E': return Position.EAST;
+			case 'S': return Position.SOUTH;
+			case 'W': return Position.WEST;
+		default: return -1;
+		}
+	}
 }
