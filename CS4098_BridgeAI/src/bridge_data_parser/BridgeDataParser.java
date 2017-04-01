@@ -31,7 +31,7 @@ public class BridgeDataParser {
 		ArrayList<TrainingData> al_training_data = new ArrayList<TrainingData>();
 		scanner.nextLine(); //Skip the first line...
 		
-		//while(scanner.hasNextLine()){		
+		while(scanner.hasNextLine()){		
 			TrainingData td = new TrainingData();
 			
 			//Cards in each player's hand
@@ -42,8 +42,8 @@ public class BridgeDataParser {
 			Hand[] hands = new Hand[4];
 			for(int i = 0; i < hands_string.length; i++){
 				String s_hand = hands_string[i];
-				
-				//Conversion of N to NORTH etc.
+
+				//Check for starting player
 				if (s_hand.contains(":")) td.setStarting_position(Position.getFromChar(s_hand.charAt(0)));
 				
 				hands[i] = new Hand(s_hand);
@@ -57,7 +57,7 @@ public class BridgeDataParser {
 			//Double dummy valuation of best resultant contract
 			line = scanner.nextLine();
 			String[] valuations = line.split("\"");
-			valuations = valuations[4].split("-");
+			valuations = valuations[3].split("-");
 			Contract contract = new Contract(valuations);
 			
 			//Play sequence of this round
@@ -66,11 +66,11 @@ public class BridgeDataParser {
 			ArrayList<Card> cards = Card.parseCardSequence(play_string[1]);
 			
 			scanner.nextLine();
-		//}
+		}
 			
 		scanner.close();
 		
-		return null;
+		return al_training_data;
 	}
 	
 }

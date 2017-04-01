@@ -10,7 +10,7 @@ public class Hand {
 	
 	public Hand(String parser_string){
 		cards = new ArrayList<Card>();
-		String[] suits = parser_string.split(".");
+		String[] suits = parser_string.split("\\.");
 		
 		//Spades
 		for(int i = 0; i < suits[0].length(); i++){
@@ -18,18 +18,18 @@ public class Hand {
 		}
 		
 		//Hearts
-		for(int i = 0; i < suits[0].length(); i++){
-			cards.add(new Card(suits[0].charAt(i), Suit.HEART));
+		for(int i = 0; i < suits[1].length(); i++){
+			cards.add(new Card(suits[1].charAt(i), Suit.HEART));
 		}
 				
 		//Diamonds
-		for(int i = 0; i < suits[0].length(); i++){
-			cards.add(new Card(suits[0].charAt(i), Suit.DIAMOND));
+		for(int i = 0; i < suits[2].length(); i++){
+			cards.add(new Card(suits[2].charAt(i), Suit.DIAMOND));
 		}
 				
 		//Clubs
-		for(int i = 0; i < suits[0].length(); i++){
-			cards.add(new Card(suits[0].charAt(i), Suit.CLUB));
+		for(int i = 0; i < suits[3].length(); i++){
+			cards.add(new Card(suits[3].charAt(i), Suit.CLUB));
 		}
 	}
 
