@@ -10,7 +10,8 @@ import bridge_data_structures.Contract;
 import bridge_data_structures.Hand;
 import bridge_data_structures.Position;
 
-public class BridgeDataParser {	
+public class BridgeDataParser {
+	
 	private String filename;
 	
 	public BridgeDataParser(String filename){
@@ -51,14 +52,13 @@ public class BridgeDataParser {
 			
 			scanner.nextLine();
 			scanner.nextLine();
+			scanner.nextLine();
 			
-			//Double dummy valuation for NS and EW
+			//Double dummy valuation of best resultant contract
 			line = scanner.nextLine();
 			String[] valuations = line.split("\"");
-			Contract ns_contract = new Contract(valuations[5]);
-			Contract ew_contract = new Contract(valuations[7]);
-			
-			scanner.nextLine();
+			valuations = valuations[4].split("-");
+			Contract contract = new Contract(valuations);
 			
 			//Play sequence of this round
 			line = scanner.nextLine();
@@ -72,4 +72,5 @@ public class BridgeDataParser {
 		
 		return null;
 	}
+	
 }

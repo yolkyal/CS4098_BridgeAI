@@ -61,7 +61,7 @@ public class Card {
 		}
 	}
 	
-	private static CardValue convertToCardValue(char c){
+	public static CardValue convertToCardValue(char c){
 		switch(c){
 		case 'A': 	return CardValue.ACE;
 		case '2': 	return CardValue.TWO;
@@ -80,7 +80,7 @@ public class Card {
 		}
 	}
 	
-	private static Suit convertToSuit(char c){
+	public static Suit convertToSuit(char c){
 		switch(c){
 		case 'S': return Suit.SPADE;
 		case 'H': return Suit.HEART;

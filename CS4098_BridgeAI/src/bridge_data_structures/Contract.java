@@ -11,7 +11,9 @@ public class Contract {
 		this.declarerPosition = declarerPosition;
 	}
 	
-	public Contract(String parser_string){
+	public Contract(String[] parser_tokens){
+		number = (int)parser_tokens[0].charAt(0);
+		suit = Card.convertToSuit(parser_tokens[0].charAt(1));
 		
 	}
 	
@@ -45,6 +47,16 @@ public class Contract {
 			case DIAMOND: if (contract.getSuit() == Suit.HEART) return false;
 			case HEART: if (contract.getSuit() == Suit.SPADE) return false;
 			default: return true;
+		}
+	}
+	
+	public int convertToPosition(char c){
+		switch(c){
+		case 'N': return Position.NORTH;
+		case 'S': return Position.SOUTH;
+		case 'W': return Position.WEST;
+		case 'E': return Position.EAST;
+		default: return -1;
 		}
 	}
 	

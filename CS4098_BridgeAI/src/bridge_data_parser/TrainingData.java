@@ -6,16 +6,13 @@ import java.util.ArrayList;
 public class TrainingData {
 	Hand[] hands;
 	int starting_position;
-	Contract ns_best_contract;
-	Contract ew_best_contract;
+	Contract best_contract;
 	ArrayList<Card> play_sequence;
 	
-	public TrainingData(Hand[] hands, int starting_position, Contract ns_best_contract, Contract ew_best_contract,
-			ArrayList<Card> play_sequence) {
+	public TrainingData(Hand[] hands, int starting_position, Contract best_contract, ArrayList<Card> play_sequence) {
 		this.hands = hands;
 		this.starting_position = starting_position;
-		this.ns_best_contract = ns_best_contract;
-		this.ew_best_contract = ew_best_contract;
+		this.best_contract = best_contract;
 		this.play_sequence = play_sequence;
 	}
 	
@@ -39,20 +36,12 @@ public class TrainingData {
 		this.starting_position = starting_position;
 	}
 
-	public Contract getNs_best_contract() {
-		return ns_best_contract;
+	public Contract getBest_contract() {
+		return best_contract;
 	}
 
-	public void setNs_best_contract(Contract ns_best_contract) {
-		this.ns_best_contract = ns_best_contract;
-	}
-
-	public Contract getEw_best_contract() {
-		return ew_best_contract;
-	}
-
-	public void setEw_best_contract(Contract ew_best_contract) {
-		this.ew_best_contract = ew_best_contract;
+	public void setBest_contract(Contract best_contract){
+		this.best_contract = best_contract;
 	}
 
 	public ArrayList<Card> getPlay_sequence() {

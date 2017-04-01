@@ -2,6 +2,9 @@ package neural_network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+
+import org.json.*;
 
 public class NeuralNetwork {
 	final static int DUMMY_INDEX = -1;
@@ -198,4 +201,30 @@ public class NeuralNetwork {
 		//Returns a random double value between 0 and 1
 		return Math.random();
 	}
+	
+	public JSONObject getJSONObject(){
+		JSONObject j_obj = new JSONObject();
+		//j_obj.put(key, value)
+		
+		Set<Point> keys = weights.keySet();
+		Point[] points = (Point[])keys.toArray();
+		JSONArray j_weights = new JSONArray();
+		for (int i = 0; i < points.length; i++){
+			JSONObject j_point = new JSONObject();
+			j_point.put("pointx", points[i].x);
+			j_point.put("pointy", points[i].y);
+			j_point.put("weight", weights.get(points[i]));
+			j_weights.put(j_point);
+		}
+		
+		for(Layer l : layers){
+			JSONObject j_layer = new JSONObject();
+			j_layer.put("start", l.getStart_index());
+			j_layer.put("end", l.getEnd_index());
+		}
+		
+		return j_obj;
+	}
+	
+	
 }
