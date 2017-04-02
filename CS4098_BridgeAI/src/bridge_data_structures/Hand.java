@@ -56,6 +56,59 @@ public class Hand {
 		return result;
 	}
 	
+	public int getNumInSuit(Suit suit){
+		ArrayList<Card> cards_in_suit = getSuitCards(suit);
+		return cards_in_suit.size();
+	}
+	
+	public int getPoints(){
+		int total = 0;
+		
+		for (Card c : cards){
+			CardValue cv = c.getValue();
+			switch(cv){
+			case ACE: total += 1;
+			case KING: total += 1;
+			case QUEEN: total += 1;
+			case JACK: total += 1;
+			default: break;
+			}
+		}
+		
+		return total;
+	}
+	
+	public int getNumPlayingTricks(){
+		int total = 0;
+		
+		boolean ace;
+		boolean king;
+		boolean queen;
+		boolean jack;
+		
+		for(Suit suit : Suit.values()){
+			ace = false;
+			king = false;
+			queen = false;
+			jack = false;
+			
+			for(Card card : getSuitCards(suit)){
+				if (card.getValue() == CardValue.ACE) ace = true;
+				else if (card.getValue() == CardValue.KING) king = true;
+				else if (card.getValue() == CardValue.QUEEN) queen = true;
+				else if (card.getValue() == CardValue.JACK) jack = true;
+			}
+			
+			if (ace && king && queen) total += 3;
+			else if (ace && king) total += 2;
+			else if (ace) total += 1;
+			else if (king && queen) total += 1;
+			else if (king && queen && jack) total += 2;
+		}
+		
+		return total;
+	}
+	
 	public void display(){
 		for (int i = 0; i < cards.size(); i+=3){
 			Card card = cards.get(i);
