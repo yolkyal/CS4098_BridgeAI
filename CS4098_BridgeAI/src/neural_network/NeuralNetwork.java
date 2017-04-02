@@ -15,7 +15,40 @@ public class NeuralNetwork {
 	private double[] nodes;
 	private double[] deltas;
 	
+	//These are only stored for JSON saving
+	int num_inputs, num_outputs, num_hidden_layers, neurons_per_hidden_layer;
+	
 	public NeuralNetwork(int num_inputs, int num_outputs, int num_hidden_layers, int neurons_per_hidden_layer){
+		
+		this.num_inputs = num_inputs;
+		this.num_outputs = num_outputs;
+		this.num_hidden_layers = num_hidden_layers;
+		this.neurons_per_hidden_layer = neurons_per_hidden_layer;
+		
+		setup();
+	}
+	
+	public NeuralNetwork(JSONObject j_obj){
+		num_inputs = j_obj.getInt("num_inputs");
+		num_outputs = j_obj.getInt("num_outputs");
+		num_hidden_layers = j_obj.getInt("num_hidden_layers");
+		neurons_per_hidden_layer = j_obj.getInt("neurons_per_hidden_layer");
+		
+		setup();
+		
+		JSONArray j_weights = j_obj.getJSONArray("weights");
+		for(int i = 0; i < j_weights.length(); i++){
+			JSONObject j_weight = j_weights.getJSONObject(i);
+			int pointx = j_weight.getInt("pointx");
+			int pointy = j_weight.getInt("pointy");
+			double weight = j_weight.getDouble("weight");
+			
+			Point key = new Point(pointx, pointy);
+			weights.put(key,  weight);
+		}
+	}
+	
+	private void setup(){
 		layers = new ArrayList<Layer>();
 		weights = new HashMap<Point, Double>();
 		
@@ -45,7 +78,6 @@ public class NeuralNetwork {
 			if (i < layers.size() - 1)
 				linkLayers(layers.get(i), layers.get(i + 1));
 		}
-		
 	}
 	
 	public void train(double[] inputs, double[] outputs, int test_number, int total_tests){
@@ -204,10 +236,21 @@ public class NeuralNetwork {
 	
 	public JSONObject getJSONObject(){
 		JSONObject j_obj = new JSONObject();
-		//j_obj.put(key, value)
 		
+		j_obj.put("num_inputs", num_inputs);
+		j_obj.put("num_outputs", num_outputs);
+		j_obj.put("num_hidden_layers", num_hidden_layers);
+		j_obj.put("neurons_per_hidden_layer", neurons_per_hidden_layer);
+
+		//Add all weights and their associated hashmap keys
 		Set<Point> keys = weights.keySet();
-		Point[] points = (Point[])keys.toArray();
+		Object[] o_points = keys.toArray();
+		Point[] points = new Point[o_points.length];
+		for(int i = 0; i < o_points.length; i++){
+			Point point = (Point)o_points[i];
+			points[i] = point;
+		}
+		
 		JSONArray j_weights = new JSONArray();
 		for (int i = 0; i < points.length; i++){
 			JSONObject j_point = new JSONObject();
@@ -216,12 +259,7 @@ public class NeuralNetwork {
 			j_point.put("weight", weights.get(points[i]));
 			j_weights.put(j_point);
 		}
-		
-		for(Layer l : layers){
-			JSONObject j_layer = new JSONObject();
-			j_layer.put("start", l.getStart_index());
-			j_layer.put("end", l.getEnd_index());
-		}
+		j_obj.put("weights", j_weights);
 		
 		return j_obj;
 	}
