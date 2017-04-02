@@ -58,7 +58,13 @@ public class ConstraintTests {
 	
 	@Test
 	public void testNumInSpecifiedSuit(){
+		NumInSpecifiedSuitConstraint nissc1 = new NumInSpecifiedSuitConstraint(5, Suit.HEART);
+		NumInSpecifiedSuitConstraint nissc2 = new NumInSpecifiedSuitConstraint(5, Suit.DIAMOND);
 		
+		assertFalse(nissc1.satisfiedBy(hand1));
+		assertFalse(nissc2.satisfiedBy(hand2));
+		assertTrue(nissc1.satisfiedBy(hand3));
+		assertTrue(nissc2.satisfiedBy(hand4));
 	}
 	
 	@Test
@@ -73,18 +79,23 @@ public class ConstraintTests {
 	}
 	
 	@Test
-	public void testNumInMinorSuit(){
+	public void testNumInAMinorSuit(){
+		NumInAMinorSuitConstraint nimsc1 = new NumInAMinorSuitConstraint(4);
 		
+		assertFalse(nimsc1.satisfiedBy(hand1));
+		assertTrue(nimsc1.satisfiedBy(hand2));
+		assertFalse(nimsc1.satisfiedBy(hand3));
+		assertTrue(nimsc1.satisfiedBy(hand4));
 	}
 	
 	@Test
 	public void testNumInMajorSuit(){
+		NumInAMajorSuitConstraint nimsc1 = new NumInAMajorSuitConstraint(5);
 		
-	}
-	
-	@Test
-	public void testRuleOfTwentyConstraints(){
-		
+		assertFalse(nimsc1.satisfiedBy(hand1));
+		assertTrue(nimsc1.satisfiedBy(hand2));
+		assertTrue(nimsc1.satisfiedBy(hand3));
+		assertFalse(nimsc1.satisfiedBy(hand4));
 	}
 
 }

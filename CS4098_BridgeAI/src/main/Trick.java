@@ -60,7 +60,7 @@ public class Trick {
 			
 			//Choose random valid card -- this will of course be changed later
 			int rand = (int)(Math.random() * options.size());
-			selected_card = options.get(rand);	
+			selected_card = options.get(rand);
 		}
 		
 		playCard(selected_card);
