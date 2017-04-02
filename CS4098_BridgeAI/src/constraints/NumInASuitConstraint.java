@@ -5,11 +5,10 @@ import bridge_data_structures.Suit;
 
 public class NumInASuitConstraint extends Constraint{
 
-	private int min, max;
+	private int number;
 	
-	public NumInASuitConstraint(int min, int max){
-		this.min = min;
-		this.max = max;
+	public NumInASuitConstraint(int number){
+		this.number = number;
 	}
 	
 	@Override
@@ -17,7 +16,7 @@ public class NumInASuitConstraint extends Constraint{
 		
 		for (Suit suit : Suit.values()){
 			int num_suit = hand.getNumInSuit(suit);
-			if (num_suit >= min && num_suit <= max) return true;
+			if (num_suit >= number) return true;
 		}
 		
 		return false;

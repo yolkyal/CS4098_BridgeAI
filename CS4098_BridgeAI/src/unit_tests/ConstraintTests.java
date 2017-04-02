@@ -40,7 +40,7 @@ public class ConstraintTests {
 	
 	@Test
 	public void testNumInASuitConstraints(){
-		NumInASuitConstraint niasc1 = new NumInASuitConstraint(5, 13);
+		NumInASuitConstraint niasc1 = new NumInASuitConstraint(5);
 		
 		assertFalse(niasc1.satisfiedBy(hand1));
 		assertTrue(niasc1.satisfiedBy(hand2));
@@ -96,6 +96,16 @@ public class ConstraintTests {
 		assertTrue(nimsc1.satisfiedBy(hand2));
 		assertTrue(nimsc1.satisfiedBy(hand3));
 		assertFalse(nimsc1.satisfiedBy(hand4));
+	}
+	
+	@Test
+	public void testNumSuitsOfSizeConstraint(){
+		NumSuitsOfSizeConstraint nsosc1 = new NumSuitsOfSizeConstraint(2, 4);
+		
+		assertFalse(nsosc1.satisfiedBy(hand1));
+		assertTrue(nsosc1.satisfiedBy(hand2));
+		assertTrue(nsosc1.satisfiedBy(hand3));
+		assertFalse(nsosc1.satisfiedBy(hand4));
 	}
 
 }

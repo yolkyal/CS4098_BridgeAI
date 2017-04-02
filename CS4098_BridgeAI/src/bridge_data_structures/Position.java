@@ -1,6 +1,6 @@
 package bridge_data_structures;
 
-public class Position {
+public abstract class Position {
 	//Essentially an enum but with array-indexable values
 	public static final int NORTH = 0;
 	public static final int EAST = 1;

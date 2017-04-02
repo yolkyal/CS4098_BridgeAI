@@ -61,6 +61,21 @@ public class Hand {
 		return cards_in_suit.size();
 	}
 	
+	public Suit getLargestSuit(){
+		int max_num = 0;
+		Suit max_suit = Suit.SPADE;
+		
+		for (Suit suit : Suit.values()){
+			int num = getNumInSuit(suit);
+			if (num > max_num){
+				max_num = num;
+				max_suit = suit;
+			}
+		}
+		
+		return max_suit;
+	}
+	
 	public int getPoints(){
 		int total = 0;
 		
