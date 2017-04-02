@@ -226,5 +226,4 @@ public class NeuralNetwork {
 		return j_obj;
 	}
 	
-	
 }
