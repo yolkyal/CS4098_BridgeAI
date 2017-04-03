@@ -97,6 +97,7 @@ public class BiddingAI {
 				return new Contract(4, best_suit, position);
 			}
 			
+			//Two Clubs
 			if(twoClubOpeningBidConditions.satisfiedBy(hand)){
 				return new Contract(2, Suit.CLUB, position);
 			}
@@ -104,7 +105,127 @@ public class BiddingAI {
 			
 		}
 		
-		return null;
+		//Pass
+		return new Contract(-1, null, position);
 	}
 	
+	PointConstraint points0to10 = new PointConstraint(0, 10);
+	PointConstraint points11to12 = new PointConstraint(11, 12);
+	PointConstraint points11to19 = new PointConstraint(11, 19);
+	PointConstraint points13to18 = new PointConstraint(13, 18);
+	PointConstraint points19to20 = new PointConstraint(19, 20);
+	PointConstraint points19OrMore = new PointConstraint(19, 100);
+	
+	NumInAMajorSuitConstraint sixCardMajorSuit = new NumInAMajorSuitConstraint(6);
+	NumInAMajorSuitConstraint fiveCardMajorSuit = new NumInAMajorSuitConstraint(5);
+	NumInAMajorSuitConstraint fourCardMajorSuit = new NumInAMajorSuitConstraint(4);
+	
+	private Contract getResponseTo1NT(Hand hand, int position){
+		
+		if (balanced.satisfiedBy(hand)){
+			
+			//Pass
+			if (points0to10.satisfiedBy(hand)){
+				return new Contract(-1, null, position);
+			}
+			
+			//2NT
+			if(points11to12.satisfiedBy(hand)){
+				return new Contract(2, null, position);
+			}
+			
+			//3NT
+			if(points13to18.satisfiedBy(hand)){
+				return new Contract(3, null, position);
+			}
+			
+			//4NT
+			if(points19to20.satisfiedBy(hand)){
+				return new Contract(4, null, position);
+			}
+			
+		}
+		else{
+			//Unbalanced
+			
+			if(points0to10.satisfiedBy(hand)){
+				Suit best_suit = hand.getLargestSuit();
+				if (best_suit != Suit.CLUB)
+					return new Contract(2, best_suit, position);
+			}
+			
+			if(points11to19.satisfiedBy(hand)){
+				
+				if(sixCardMajorSuit.satisfiedBy(hand)){
+					
+					//BID GAME
+					
+					Suit best_suit = hand.getLargestSuit();
+					return new Contract(4, best_suit, position);
+				}
+				
+				if (fiveCardMajorSuit.satisfiedBy(hand)){
+					Suit best_suit = hand.getLargestSuit();
+					return new Contract(3, best_suit, position);
+				}
+				
+				if(fourCardMajorSuit.satisfiedBy(hand)){
+					return new Contract(2, Suit.CLUB, position);
+				}
+			}
+			
+			if(points19OrMore.satisfiedBy(hand)){
+				//Look for a slam after finding a fit
+			}
+			
+			
+		}
+		
+		return new Contract(-1, null, position);
+	}
+	
+	PointConstraint points0to3 = new PointConstraint(0, 3);
+	PointConstraint points4to10 = new PointConstraint(4, 10);
+	NumInAMinorSuitConstraint longMinor = new NumInAMinorSuitConstraint(6);
+	OrConstraint threeNTBiddingConditions = new OrConstraint(balanced, longMinor);
+
+	private Contract getResponseTo2NT(Hand hand, int position){
+		
+		//Pass
+		if(points0to3.satisfiedBy(hand)){
+			return new Contract(-1, null, position);
+		}
+		
+		if(points4to10.satisfiedBy(hand)){
+			
+			if(threeNTBiddingConditions.satisfiedBy(hand)){
+				return new Contract(3, null, position);
+			}
+			
+			if(sixCardMajorSuit.satisfiedBy(hand)){
+				
+				//BID GAME
+				
+				Suit best_suit = hand.getLargestSuit();
+				return new Contract(4, best_suit, position);
+			}
+			
+			if (fiveCardMajorSuit.satisfiedBy(hand)){
+				Suit best_suit = hand.getLargestSuit();
+				return new Contract(3, best_suit, position);
+			}
+			
+			if(fourCardMajorSuit.satisfiedBy(hand)){
+				return new Contract(3, Suit.CLUB, position);
+			}
+			
+		}
+		
+		if(points11OrMore.satisfiedBy(hand)){
+			//Look for a slam after finding a fit
+		}
+		
+		
+		return null;
+	}
 }
