@@ -190,31 +190,61 @@ public class BiddingAI {
 			Constraint constraint = getOpeningBidConstraint(ls_bids.get(0));
 			return new PlayerConstraint(position, constraint);
 		}
-		else if(ls_bids.size() == 2){
+		else if(ls_bids.size() == 3){
 			Contract opening_bid = ls_bids.get(0);
 			
 			if(opening_bid.getNumber() == 1 && opening_bid.getSuit() == null){
-				Constraint constraint = getResponseTo1NTConstraint(ls_bids.get(1));
+				Constraint constraint = getResponseTo1NTConstraint(ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 			else if(opening_bid.getNumber() == 1 && opening_bid.getSuit() != null){
-				Constraint constraint = getResponseToOneOfASuitConstraint(opening_bid, ls_bids.get(1));
+				Constraint constraint = getResponseToOneOfASuitConstraint(opening_bid, ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == null){
-				Constraint constraint = getResponseTo2NTConstraint(ls_bids.get(1));
+				Constraint constraint = getResponseTo2NTConstraint(ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == Suit.CLUB){
-				Constraint constraint = getResponseToOpeningTwoClubsConstraint(ls_bids.get(1));
+				Constraint constraint = getResponseToOpeningTwoClubsConstraint(ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 			else if(opening_bid.getNumber() == 2){
-				Constraint constraint = getResponseToTwoOfASuitConstraint(opening_bid, ls_bids.get(1));
+				Constraint constraint = getResponseToTwoOfASuitConstraint(opening_bid, ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 			else if(opening_bid.getNumber() == 3){
-				Constraint constraint = getResponseToThreeOfASuitConstraint(opening_bid, ls_bids.get(1));
+				Constraint constraint = getResponseToThreeOfASuitConstraint(opening_bid, ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+		}
+		else if(ls_bids.size() == 5){
+			Contract opening_bid = ls_bids.get(0);
+			Contract response_bid = ls_bids.get(2);
+			Contract opener_rebid = ls_bids.get(4);
+			
+			if(opening_bid.getNumber() == 1 && opening_bid.getSuit() == null){
+				Constraint constraint = openingRebidAfter1NTConstraint(ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 1 && opening_bid.getSuit() != null){
+				Constraint constraint = openingRebidAfterOneOfASuitConstraint(opening_bid, ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == null){
+				Constraint constraint = openingRebidAfter2NTConstraint(ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == Suit.CLUB){
+				Constraint constraint = openingRebidAfterTwoClubsConstraint(ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2){
+				Constraint constraint = openingRebidAfterTwoOfASuitConstraint(opening_bid, ls_bids.get(2));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 3){
+				Constraint constraint = getResponseToThreeOfASuitConstraint(opening_bid, ls_bids.get(2));
 				return new PlayerConstraint(position, constraint);
 			}
 		}
@@ -842,6 +872,39 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint openingRebidAfter1NTConstraint(Contract response, Contract bid){
+		
+		if(bid.getNumber() == 3 && bid.getSuit() == null){
+			return points14OrMore;
+		}
+		else if(bid.getNumber() == 4 && bid.getSuit() == null){
+			return points14OrMore;
+		}
+		
+		NumInSpecifiedSuitConstraint fourSpades = new NumInSpecifiedSuitConstraint(4, Suit.SPADE);
+		NumInSpecifiedSuitConstraint fourHearts = new NumInSpecifiedSuitConstraint(4, Suit.HEART);
+		if(response.getNumber() == 2 && response.getSuit() == Suit.CLUB){
+			if(bid.getNumber() == 2 && bid.getSuit() == Suit.SPADE){
+				return fourSpades;
+			}
+			else if(bid.getNumber() == 2 && bid.getSuit() == Suit.HEART){
+				return fourHearts;
+			}
+		}
+		
+		//BID GAMES...
+			
+		if (response.getNumber() == 3){
+			if(bid.getNumber() == 3 && bid.getSuit() == null){
+				MinMaxInSpecifiedSuitConstraint zeroToTwoOfSuit = 
+						new MinMaxInSpecifiedSuitConstraint(0, 2, response.getSuit());
+				return zeroToTwoOfSuit;
+			}
+		}
+		
+		return null;
+		
+	}
 	
 	private static Contract openingRebidAfter2NT(Hand hand, int position, Contract response){
 		int response_number = response.getNumber();
@@ -858,12 +921,12 @@ public class BiddingAI {
 				
 				if (threeOrFourSpades.satisfiedBy(hand)){
 					//BID GAME
-				}				
+				}
 			}
 			
 			if(response_suit == Suit.HEART){
 				MinMaxInSpecifiedSuitConstraint threeOrFourHearts = 
-						new MinMaxInSpecifiedSuitConstraint(3, 4, Suit.HEART);
+					new MinMaxInSpecifiedSuitConstraint(3, 4, Suit.HEART);
 				
 				if (threeOrFourHearts.satisfiedBy(hand)){
 					//BID GAME
@@ -880,6 +943,27 @@ public class BiddingAI {
 		}
 
 		return new Contract(-1, null, position);
+	}
+	
+	private static Constraint openingRebidAfter2NTConstraint(Contract response, Contract bid){
+		
+		//BID GAMES...
+		
+		if (response.getNumber() == 3){
+			if(bid.getNumber() == 3 && bid.getSuit() == null){
+				MinMaxInSpecifiedSuitConstraint zeroToTwoOfSuit = 
+					new MinMaxInSpecifiedSuitConstraint(0, 2, response.getSuit());
+				return zeroToTwoOfSuit;
+			}
+		}
+		
+		if(response.getNumber() == 4 && response.getSuit() == null){
+			if(bid.getNumber() == 6 && bid.getSuit() == null){
+				return points22OrMore;
+			}
+		}
+		
+		return null;
 	}
 	
 	
@@ -955,6 +1039,45 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint openingRebidAfterOneOfASuitConstraint(Contract opening_bid,
+			Contract response, Contract bid){
+		
+		if(response.getSuit() != opening_bid.getSuit()){
+			
+			MinMaxInSpecifiedSuitConstraint zeroToTwoInThisSuit =
+					new MinMaxInSpecifiedSuitConstraint(0, 3, response.getSuit());
+			NumInSpecifiedSuitConstraint fourInThisSuit = 
+					new NumInSpecifiedSuitConstraint(4, response.getSuit());
+			NumInSpecifiedSuitConstraint fiveInOriginalSuit = 
+					new NumInSpecifiedSuitConstraint(5, opening_bid.getSuit());
+			NumInSpecifiedSuitConstraint sixInOriginalSuit = 
+					new NumInSpecifiedSuitConstraint(6, opening_bid.getSuit());
+			
+			if(bid.getNumber() == response.getNumber() + 1){
+		
+				if (bid.getNumber() == response.getNumber() + 1 && bid.getSuit() == response.getSuit()){
+					return new AndConstraint(fourInThisSuit, points11to15);
+				}
+			
+				if(response.getSuit() != null){
+					return new AndConstraint(points11to15, fiveInOriginalSuit);
+				}
+				else if (bid.getNumber() == response.getNumber() + 1 && 
+						bid.getSuit() == opening_bid.getSuit()){
+					return sixInOriginalSuit;
+				}
+			}
+			else if(bid.getNumber() == response.getNumber() + 2){
+				return new AndConstraint(fourInThisSuit, points16to18);
+			}
+			else if(bid.getNumber() == 3 && bid.getSuit() == null){
+				return new AndConstraint(points19OrMore, zeroToTwoInThisSuit);
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	private static Contract openingRebidAfterTwoOfASuit(Hand hand, int position, Contract original, Contract response){
 
@@ -978,6 +1101,14 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint openingRebidAfterTwoClubsConstraint(Contract response, Contract bid){
+		
+		if(bid.getNumber() == 2 && bid.getSuit() == null){
+			return points23to24;
+		}
+		
+		return null;
+	}
 	
 	private static Contract openingRebidAfterThreeOfASuit(Hand hand, int position, Contract original, Contract response){
 		Suit response_suit = response.getSuit();
