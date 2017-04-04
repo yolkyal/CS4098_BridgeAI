@@ -3,20 +3,21 @@ import java.util.ArrayList;
 
 public class Hand {
 	private ArrayList<Card> cards;
-	private int points;
+	private int orig_points;
+	private boolean orig_balanced;
 	
 	public Hand(ArrayList<Card> cards){
 		this.cards = cards;
 		
-		points = 0;
+		orig_points = 0;
 		
 		for (Card c : cards){
 			CardValue cv = c.getValue();
 			switch(cv){
-			case ACE: points += 1;
-			case KING: points += 1;
-			case QUEEN: points += 1;
-			case JACK: points += 1;
+			case ACE: orig_points += 1;
+			case KING: orig_points += 1;
+			case QUEEN: orig_points += 1;
+			case JACK: orig_points += 1;
 			default: break;
 			}
 		}
@@ -46,18 +47,37 @@ public class Hand {
 			cards.add(new Card(suits[3].charAt(i), Suit.CLUB));
 		}
 		
-		points = 0;
+		orig_points = 0;
 		
 		for (Card c : cards){
 			CardValue cv = c.getValue();
 			switch(cv){
-			case ACE: points += 1;
-			case KING: points += 1;
-			case QUEEN: points += 1;
-			case JACK: points += 1;
+			case ACE: orig_points += 1;
+			case KING: orig_points += 1;
+			case QUEEN: orig_points += 1;
+			case JACK: orig_points += 1;
 			default: break;
 			}
 		}
+		
+		boolean found_one_doubleton = false;
+		boolean isBalanced = true;
+		for (Suit suit : Suit.values()){
+			int num_in_suit = getNumInSuit(suit);
+			
+			if (num_in_suit < 2){
+				isBalanced = false;
+				break;
+			}
+			else if (num_in_suit == 2){
+				if (found_one_doubleton){
+					isBalanced = false;
+					break;
+				}
+				else found_one_doubleton = true;
+			}
+		}
+		orig_balanced = isBalanced;
 	}
 
 	public ArrayList<Card> getCards() {
@@ -104,7 +124,11 @@ public class Hand {
 	}
 	
 	public int getPoints(){
-		return points;
+		return orig_points;
+	}
+	
+	public boolean isBalanced(){
+		return orig_balanced;
 	}
 	
 	public int getNumPlayingTricks(){

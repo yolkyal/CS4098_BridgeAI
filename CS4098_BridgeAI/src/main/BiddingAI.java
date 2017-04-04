@@ -21,6 +21,7 @@ public class BiddingAI {
 	static PointConstraint points6to9 = new PointConstraint(6, 9);
 	static PointConstraint points8to11 = new PointConstraint(8, 11);
 	static PointConstraint points8OrMore = new PointConstraint(8, 100);
+	static PointConstraint points9to16 = new PointConstraint(9, 16);
 	static PointConstraint points9OrMore = new PointConstraint(9, 100);
 	static PointConstraint points10to12 = new PointConstraint(10, 12);
 	static PointConstraint points10OrMore = new PointConstraint(10, 100);
@@ -73,11 +74,11 @@ public class BiddingAI {
 	
 	static AndConstraint threeSuitBidConditions = new AndConstraint(points6to9, sevenCardSuit);
 	static AndConstraint fourSuitBidConditions = new AndConstraint(points6to9, eightCardSuit);
-	static AndConstraint twoClubOpeningBidConditions = new AndConstraint(points23OrMore, tenPlayingTricks);
+	static OrConstraint twoClubOpeningBidConditions = new OrConstraint(points23OrMore, tenPlayingTricks);
 	
 	static OrConstraint threeNTBiddingConditions = new OrConstraint(balanced, longMinor);
 	
-	public static Contract getBid(int position, Hand hand, ArrayList<PlayerConstraint> 
+	public Contract getBid(int position, Hand hand, ArrayList<PlayerConstraint> 
 	ls_player_constraints, ArrayList<Contract> ls_bids){
 		
 		//OPENING BID
@@ -181,6 +182,46 @@ public class BiddingAI {
 		
 		return null;	
 	}
+	
+	public static PlayerConstraint getConstraintFromLastBid(ArrayList<Contract> 
+	ls_bids, int position){
+		
+		if(ls_bids.size() == 1){
+			Constraint constraint = getOpeningBidConstraint(ls_bids.get(0));
+			return new PlayerConstraint(position, constraint);
+		}
+		else if(ls_bids.size() == 2){
+			Contract opening_bid = ls_bids.get(0);
+			
+			if(opening_bid.getNumber() == 1 && opening_bid.getSuit() == null){
+				Constraint constraint = getResponseTo1NTConstraint(ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 1 && opening_bid.getSuit() != null){
+				Constraint constraint = getResponseToOneOfASuitConstraint(opening_bid, ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == null){
+				Constraint constraint = getResponseTo2NTConstraint(ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2 && opening_bid.getSuit() == Suit.CLUB){
+				Constraint constraint = getResponseToOpeningTwoClubsConstraint(ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 2){
+				Constraint constraint = getResponseToTwoOfASuitConstraint(opening_bid, ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+			else if(opening_bid.getNumber() == 3){
+				Constraint constraint = getResponseToThreeOfASuitConstraint(opening_bid, ls_bids.get(1));
+				return new PlayerConstraint(position, constraint);
+			}
+		}
+		
+		
+		return null;
+	}
 
 //OPENING-BIDS-----------------------------------------------------------------
 	
@@ -194,7 +235,8 @@ public class BiddingAI {
 			}
 			
 			if(points15to19.satisfiedBy(hand)){
-				//Consider whether we want this...
+				Suit best_suit = hand.getLargestSuit();
+				return new Contract(1, best_suit, position);
 			}
 			
 			//2NT
@@ -235,17 +277,55 @@ public class BiddingAI {
 				return new Contract(2, Suit.CLUB, position);
 			}
 			
-			
 		}
 		
 		//Pass
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint getOpeningBidConstraint(Contract bid){
+		
+		//NT BID
+		if(bid.getSuit() == null){
+			if(bid.getNumber() == 1){
+				return new AndConstraint(balanced, points12to14);
+			}
+		
+			if(bid.getNumber() == 2){
+				return new AndConstraint(balanced, points20to22);
+			}
+		}
+		else{
+			if(bid.getNumber() == 1){
+				AndConstraint constraint1 = new AndConstraint(unbalanced, 
+						singleSuitBidConditions);
+				AndConstraint constraint2 = new AndConstraint(balanced, points15to19);
+				OrConstraint constraint = new OrConstraint(constraint1, constraint2);
+				return constraint;
+			}
+			else if(bid.getNumber() == 2){
+				
+				if(bid.getSuit() != Suit.CLUB){
+					return new AndConstraint(unbalanced, twoSuitBidConditions);
+				}
+				else{
+					return new AndConstraint(unbalanced, twoClubOpeningBidConditions);
+				}
+			}
+			else if(bid.getNumber() == 3){
+				return new AndConstraint(unbalanced, threeSuitBidConditions);
+			}
+			else if(bid.getNumber() == 4){
+				return new AndConstraint(unbalanced, fourSuitBidConditions);
+			}
+		}
+		
+		//No retrievable information
+		return null;
+		
+	}
+	
 //RESPONSE-BIDS----------------------------------------------------------------
-	
-	
-//RESPONSES--------------------------------------------------------------------
 	
 	private static Contract getResponseTo1NT(Hand hand, int position){
 		
@@ -290,19 +370,19 @@ public class BiddingAI {
 					Suit best_suit = hand.getLargestSuit();
 					return new Contract(4, best_suit, position);
 				}
-				
-				if (fiveCardMajorSuit.satisfiedBy(hand)){
+				else if (fiveCardMajorSuit.satisfiedBy(hand)){
 					Suit best_suit = hand.getLargestSuit();
 					return new Contract(3, best_suit, position);
 				}
-				
-				if(fourCardMajorSuit.satisfiedBy(hand)){
+				else if(fourCardMajorSuit.satisfiedBy(hand)){
 					return new Contract(2, Suit.CLUB, position);
 				}
 			}
 			
 			if(points19OrMore.satisfiedBy(hand)){
 				//Look for a slam after finding a fit
+				
+				//BID AI
 			}
 			
 			
@@ -311,7 +391,44 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
-
+	private static Constraint getResponseTo1NTConstraint(Contract bid){
+		
+		if(bid.getNumber() == -1){
+			return new AndConstraint(balanced, points0to10);
+		}
+		
+		if(bid.getSuit() == null){
+		
+			if(bid.getNumber() == 2){
+				return new AndConstraint(balanced, points11to12);
+			}
+			else if(bid.getNumber() == 3){
+				return new AndConstraint(balanced, points13to18);
+			}
+			else if(bid.getNumber() == 4){
+				return new AndConstraint(balanced, points19to20);
+			}
+		}
+		else{
+			if(bid.getNumber() == 2 && bid.getSuit() != Suit.CLUB){
+				return new AndConstraint(unbalanced, points0to10);
+			}
+			else if(bid.getNumber() == 2 && bid.getSuit() == Suit.CLUB){
+				return new AndConstraint(unbalanced, fourCardMajorSuit);
+			}
+			else if(bid.getNumber() == 3 && bid.getSuit() != Suit.DIAMOND
+					& bid.getSuit() != Suit.CLUB){
+				return new AndConstraint(unbalanced, fiveCardMajorSuit);
+			}
+			else if(bid.getNumber() == 4 && bid.getSuit() != Suit.DIAMOND
+					& bid.getSuit() != Suit.CLUB){
+				return new AndConstraint(unbalanced, sixCardMajorSuit);
+			}
+		}
+		
+		return null;
+	}
+	
 	private static Contract getResponseTo2NT(Hand hand, int position){
 		
 		//Pass
@@ -348,6 +465,33 @@ public class BiddingAI {
 			//Look for a slam after finding a fit
 		}
 		
+		return null;
+	}
+	
+	private static Constraint getResponseTo2NTConstraint(Contract bid){
+		
+		if(bid.getNumber() == -1){
+			return points0to3;
+		}
+		
+		if(bid.getNumber() == 2 && bid.getSuit() != Suit.CLUB){
+			return new AndConstraint(points4to10, points0to10);
+		}
+		else if(bid.getNumber() == 2 && bid.getSuit() == Suit.CLUB){
+			return new AndConstraint(points4to10, fourCardMajorSuit);
+		}
+		else if(bid.getNumber() == 3 && bid.getSuit() != Suit.DIAMOND
+				& bid.getSuit() != Suit.CLUB){
+			return new AndConstraint(points4to10, fiveCardMajorSuit);
+		}
+		else if(bid.getNumber() == 4 && bid.getSuit() != Suit.DIAMOND
+				& bid.getSuit() != Suit.CLUB){
+			return new AndConstraint(points4to10, sixCardMajorSuit);
+		}
+		
+		if(bid.getNumber() == 4 && bid.getSuit() == null){
+			return new AndConstraint(points11to12, balanced);
+		}
 		
 		return null;
 	}
@@ -388,15 +532,12 @@ public class BiddingAI {
 		}
 		
 		if (fiveCardSuit.satisfiedBy(hand)){
-			
-			if(points16OrMore.satisfiedBy(hand)){
-				return new Contract(3, best_suit, position);
-			}
-			
-			if (points9OrMore.satisfiedBy(hand)){
+			if (points9to16.satisfiedBy(hand)){
 				return new Contract(2, best_suit, position);
 			}
-			
+			else if(points16OrMore.satisfiedBy(hand)){
+				return new Contract(3, best_suit, position);
+			}	
 		}
 		
 		//NT bids
@@ -417,11 +558,57 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint getResponseToOneOfASuitConstraint(Contract opening_bid, Contract bid){
+		
+		NumInSpecifiedSuitConstraint fourInBidSuit = 
+				new NumInSpecifiedSuitConstraint(4, bid.getSuit());
+		NumInSpecifiedSuitConstraint fiveInBidSuit = 
+				new NumInSpecifiedSuitConstraint(5, bid.getSuit());
+		
+		if(bid.getNumber() == -1){
+			return points0to5;
+		}
+		
+		if(opening_bid.getSuit() == bid.getSuit()){	
+			if(bid.getNumber() == 2){
+				return new AndConstraint(fourInBidSuit, points6to9);
+			}
+			else if(bid.getNumber() == 3){
+				return new AndConstraint(fourInBidSuit, points10to12);
+			}
+			else if(bid.getNumber() == 4){
+				return new AndConstraint(fourInBidSuit, points13to15);
+			}
+		}
+		else{
+			if(bid.getNumber() == 1){
+				return new AndConstraint(fourInBidSuit, points6to9);
+			}
+			else if(bid.getNumber() == 2){
+				return new AndConstraint(fiveCardSuit, points9to16);
+			}
+			else if(bid.getNumber() == 3){
+				return new AndConstraint(fiveCardSuit, points16OrMore);
+			}
+		}
+		
+		if(bid.getSuit() == null){
+			if(bid.getNumber() == 1){
+				return points6to9;
+			}
+			else if(bid.getNumber() == 2){
+				return new AndConstraint(balanced, points10to12);
+			}
+			else if(bid.getNumber() == 3){
+				return new AndConstraint(balanced, points13to15);
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	private static Contract getResponseToTwoOfASuit(Hand hand, int position, Suit bid_suit){
-		
-		NumInSpecifiedSuitConstraint threeInThisSuit = new NumInSpecifiedSuitConstraint(3, bid_suit);
-		AndConstraint threeOfThisSuitConditions = new AndConstraint(points5to8, threeInThisSuit);
 		
 		//2NT
 		if(points0to7.satisfiedBy(hand)){
@@ -429,22 +616,29 @@ public class BiddingAI {
 		}
 		
 		//3 in same suit
-		if(threeOfThisSuitConditions.satisfiedBy(hand)){
-			return new Contract(3, bid_suit, position);
+		NumInSpecifiedSuitConstraint threeInThisSuit = new NumInSpecifiedSuitConstraint(3, bid_suit);
+		SpecifiedCardValueConstraint hasAce = new SpecifiedCardValueConstraint(CardValue.ACE);
+		if(threeInThisSuit.satisfiedBy(hand)){
+			
+			if(!hasAce.satisfiedBy(hand)){
+				return new Contract(3, bid_suit, position);
+			}
+			else{
+				//BID GAME
+			}
 		}
 				
-		
 		//Bid a different suit
 		Suit best_suit = hand.getLargestSuit();
 		if(best_suit != bid_suit){
 			NumInSpecifiedSuitConstraint fiveInThisSuit = new NumInSpecifiedSuitConstraint(5, best_suit);
-			
-			if(compareSuits(best_suit, bid_suit)){
-				return new Contract(2, best_suit, position);
+			if(fiveInThisSuit.satisfiedBy(hand)){
+				if(compareSuits(best_suit, bid_suit)){
+					return new Contract(2, best_suit, position);
+				}
+				else return new Contract(3, best_suit, position);
 			}
-			else return new Contract(3, best_suit, position);
 		}
-		
 		
 		//3NT
 		if(balanced.satisfiedBy(hand)){
@@ -456,6 +650,36 @@ public class BiddingAI {
 		//Pass
 		return new Contract(-1, null, position);
 		
+	}
+	
+	private static Constraint getResponseToTwoOfASuitConstraint(Contract opening_bid, Contract bid){
+		
+		if(bid.getNumber() == 2 && bid.getSuit() == null){
+			return points0to7;
+		}
+		
+		NumInSpecifiedSuitConstraint threeInThisSuit = new NumInSpecifiedSuitConstraint(3, bid.getSuit());
+		SpecifiedCardValueConstraint hasAce = new SpecifiedCardValueConstraint(CardValue.ACE);
+		if(opening_bid.getSuit() == bid.getSuit()){
+			if(bid.getNumber() == 3){
+				AndConstraint and1 = new AndConstraint(threeInThisSuit, hasAce);
+				return new AndConstraint(points8OrMore, and1);
+			}
+			else{
+				//BID GAME
+			}
+		}
+		else{
+			NumInSpecifiedSuitConstraint fiveInThisSuit = new 
+					NumInSpecifiedSuitConstraint(5, bid.getSuit());
+			return new AndConstraint(points8OrMore, fiveInThisSuit);
+		}
+		
+		if(bid.getNumber() == 3 && bid.getSuit() == null){
+			return new AndConstraint(points8to11, balanced);
+		}	
+		
+		return null;
 	}
 	
 	
@@ -470,11 +694,11 @@ public class BiddingAI {
 			return new Contract(3, best_suit, position);
 		}
 		
-		if(balanced.satisfiedBy(hand) && points8OrMore.satisfiedBy(hand)){
+		if(balanced.satisfiedBy(hand)){
 			return new Contract(2, null, position);
 		}
 		
-		if(points8OrMore.satisfiedBy(hand) && fiveCardSuit.satisfiedBy(hand)){
+		if(fiveCardSuit.satisfiedBy(hand)){
 			Suit best_suit = hand.getLargestSuit();
 			if(best_suit != Suit.CLUB)
 				return new Contract(2, best_suit, position);
@@ -483,13 +707,38 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint getResponseToOpeningTwoClubsConstraint(Contract bid){
+		
+		if(bid.getNumber() == 2 && bid.getSuit() == Suit.DIAMOND){
+			return points0to7;
+		}
+		
+		if(bid.getNumber() == 3){
+			NumInSpecifiedSuitConstraint sixInThisSuit = new 
+					NumInSpecifiedSuitConstraint(6, bid.getSuit());
+			return new AndConstraint(sixInThisSuit, points8OrMore);
+		}
+		
+		if(bid.getNumber() == 2 && bid.getSuit() == null){
+			return new AndConstraint(balanced, points8OrMore);
+		}
+		
+		if(bid.getNumber() == 2){
+			NumInSpecifiedSuitConstraint fiveInThisSuit = new 
+					NumInSpecifiedSuitConstraint(5, bid.getSuit());
+			return new AndConstraint(fiveInThisSuit, points8OrMore);
+		}
+		
+		return null;
+	}
+	
 	
 	private static Contract getResponseToThreeOfASuit(Hand hand, int position, Suit bid_suit){
 		
-		NumInSpecifiedSuitConstraint threeSupportingCards = new NumInSpecifiedSuitConstraint(3, bid_suit);
+		NumInSpecifiedSuitConstraint threeInThisSuit= new NumInSpecifiedSuitConstraint(3, bid_suit);
 		
 		if(points0to15.satisfiedBy(hand)){
-			if(threeSupportingCards.satisfiedBy(hand)){
+			if(threeInThisSuit.satisfiedBy(hand)){
 				return new Contract(4, bid_suit, position);
 			}
 			else{
@@ -501,13 +750,31 @@ public class BiddingAI {
 			//BID GAME
 		}
 		
-		
 		return new Contract(-1, null, position);
 	}
 	
+	private static Constraint getResponseToThreeOfASuitConstraint(Contract opening_bid, Contract bid){
+		
+		NumInSpecifiedSuitConstraint threeInThisSuit = 
+				new NumInSpecifiedSuitConstraint(3, opening_bid.getSuit());
+		MinMaxInSpecifiedSuitConstraint lessThanThreeInThisSuit = 
+				new MinMaxInSpecifiedSuitConstraint(0,2, opening_bid.getSuit());
+		
+		if(bid.getNumber() == -1){
+			return new AndConstraint(lessThanThreeInThisSuit, points0to15);
+		}
+		else if(bid.getNumber() == 4 && opening_bid.getSuit() == bid.getSuit()){
+			return new AndConstraint(threeInThisSuit, points0to15);
+		}
+		else{
+			//BID GAME
+		}
+		
+		return null;
+		
+	}
+	
 //OPENING-REBIDS---------------------------------------------------------------
-	
-	
 	
 	private static Contract openingRebidAfter1NT(Hand hand, int position, Contract response){
 		int response_number = response.getNumber();
@@ -527,6 +794,22 @@ public class BiddingAI {
 		
 		if(response_number == 2 && response_suit != null && response_suit != Suit.CLUB){
 			return new Contract(-1, null, position);
+		}
+		
+		if(response_number == 2 && response_suit == Suit.CLUB){
+			NumInSpecifiedSuitConstraint fourHearts = new 
+					NumInSpecifiedSuitConstraint(4, Suit.HEART);
+			NumInSpecifiedSuitConstraint fourSpades = new 
+					NumInSpecifiedSuitConstraint(4, Suit.SPADE);
+			
+			if(fourSpades.satisfiedBy(hand)){
+				return new Contract(2, Suit.SPADE, position);
+			}
+			else if(fourHearts.satisfiedBy(hand)){
+				return new Contract(2, Suit.HEART, position);
+			}
+			else return new Contract(2, Suit.DIAMOND, position);
+			
 		}
 		
 		if(response_number == 4 && (response_suit == Suit.HEART || response_suit == Suit.SPADE)){

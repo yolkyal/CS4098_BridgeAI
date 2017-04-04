@@ -13,19 +13,10 @@ public class BalanceConstraint extends Constraint {
 	
 	@Override
 	public boolean satisfiedBy(Hand hand) {
-		boolean found_one_doubleton = false;
-		
-		for (Suit suit : Suit.values()){
-			int num_in_suit = hand.getNumInSuit(suit);
-			
-			if (num_in_suit < 2) return !isBalanced;
-			else if (num_in_suit == 2){
-				if (found_one_doubleton) return !isBalanced;
-				else found_one_doubleton = true;
-			}
+		if(isBalanced){
+			return hand.isBalanced();
 		}
-		
-		return isBalanced;
+		else return !hand.isBalanced();
 	}
 	
 }
