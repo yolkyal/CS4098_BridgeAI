@@ -26,12 +26,14 @@ public class BiddingAI {
 	PointConstraint points10OrMore = new PointConstraint(10, 100);
 	PointConstraint points11OrMore = new PointConstraint(11, 100);
 	PointConstraint points11to12 = new PointConstraint(11, 12);
+	PointConstraint points11to15 = new PointConstraint(11, 15);
 	PointConstraint points11to19 = new PointConstraint(11, 19);
 	PointConstraint points12OrMore = new PointConstraint(12, 100);
 	PointConstraint points12to14 = new PointConstraint(12, 14);
 	PointConstraint points13to15 = new PointConstraint(13, 15);
 	PointConstraint points13to18 = new PointConstraint(13, 18);
 	PointConstraint points15to19 = new PointConstraint(15, 19);
+	PointConstraint points16to18 = new PointConstraint(16, 18);
 	PointConstraint points16to22 = new PointConstraint(16, 22);
 	PointConstraint points16OrMore = new PointConstraint(16, 100);
 	PointConstraint points19to20 = new PointConstraint(19, 20);
@@ -39,6 +41,7 @@ public class BiddingAI {
 	PointConstraint points20to22 = new PointConstraint(20, 22);
 	PointConstraint points22OrMore = new PointConstraint(22, 100);
 	PointConstraint points23OrMore = new PointConstraint(23, 100);
+	PointConstraint points23to24 = new PointConstraint(23, 24);
 	
 	NumInASuitConstraint fourCardSuit = new NumInASuitConstraint(4);
 	NumInASuitConstraint fiveCardSuit = new NumInASuitConstraint(5);
@@ -488,26 +491,109 @@ public class BiddingAI {
 		return new Contract(-1, null, position);
 	}
 	
-	private Contract openingRebidAfterOneOfASuit(Hand hand, int position, Contract response){
+	private Contract openingRebidAfterOneOfASuit(Hand hand, int position, Contract original, Contract response){
+		int response_number = response.getNumber();
+		Suit response_suit = response.getSuit();
 		
+		if(response_number == -1){
+			return new Contract(-1, null, position);
+		}
+		
+		int hand_points = hand.getPoints();
+		int partner_points = 0;
+		//Look at constraints on partner's hand to assess points
+		
+		NumInSpecifiedSuitConstraint fourInThisSuit = 
+				new NumInSpecifiedSuitConstraint(4, response_suit);
+		
+			
+		if(response_suit != original.getSuit()){
+			Suit original_suit = original.getSuit();
+				
+			if(points11to15.satisfiedBy(hand)){	
+			
+				NumInSpecifiedSuitConstraint fiveInOriginalSuit = 
+						new NumInSpecifiedSuitConstraint(5, original_suit);
+				
+				//Simple raise of response suit
+				if (fourInThisSuit.satisfiedBy(hand)){
+					return new Contract(response_number + 1, response_suit, position);
+				}
+				
+				//Rebid of original suit (except over response NT)
+				if (response_suit != null){
+					if (fiveInOriginalSuit.satisfiedBy(hand)){
+						if(compareSuits(original_suit, response_suit)){
+							return new Contract(response_number, original_suit, position);
+						}
+						else{
+							return new Contract(response_number + 1, original_suit, position);
+						}
+					}
+				}
+				//Rebid over response NT
+				else{
+					NumInSpecifiedSuitConstraint sixInOriginalSuit = 
+							new NumInSpecifiedSuitConstraint(6, original_suit);
+					
+					if(sixInOriginalSuit.satisfiedBy(hand)){
+						return new Contract(response_number + 1, original_suit, position);
+					}
+				}	
+			}
+			
+			//Jump support of response suit
+			if(points16to18.satisfiedBy(hand)){
+				if (fourInThisSuit.satisfiedBy(hand)){
+					return new Contract(response_number + 2, response_suit, position);
+				}
+			}
+			
+			if(points19OrMore.satisfiedBy(hand)){
+				if(fourInThisSuit.satisfiedBy(hand)){
+					//BID GAME
+				}
+				//3NT
+				else{
+					return new Contract(3, null, position);
+				}
+			}
+		}
 
 		return new Contract(-1, null, position);
 	}
 	
-	private Contract openingRebidAfterTwoOfASuit(Hand hand, int position, Contract response){
-		
+	private Contract openingRebidAfterTwoOfASuit(Hand hand, int position, Contract original, Contract response){
 
+		//BID AI
+		
 		return new Contract(-1, null, position);
 	}
 	
 	private Contract openingRebidAfterTwoOfClubs(Hand hand, int position, Contract response){
+		int response_number = response.getNumber();
+		Suit response_suit = response.getSuit();
+		
+		if(response_number == 2 && response_suit == Suit.DIAMOND){
+			if(points23to24.satisfiedBy(hand)){
+				return new Contract(2, null, position);
+			}
+		}
 		
 
 		return new Contract(-1, null, position);
 	}
 	
-	private Contract openingRebidAfterThreeOfASuit(Hand hand, int position, Contract response){
+	private Contract openingRebidAfterThreeOfASuit(Hand hand, int position, Contract original, Contract response){
+		Suit response_suit = response.getSuit();
+		Suit original_suit = original.getSuit();
 		
+		if(response_suit == original_suit){
+			return new Contract(-1, null, position);
+		}
+		else{
+			//AI BID
+		}
 
 		return new Contract(-1, null, position);
 	}

@@ -3,9 +3,23 @@ import java.util.ArrayList;
 
 public class Hand {
 	private ArrayList<Card> cards;
+	private int points;
 	
 	public Hand(ArrayList<Card> cards){
 		this.cards = cards;
+		
+		points = 0;
+		
+		for (Card c : cards){
+			CardValue cv = c.getValue();
+			switch(cv){
+			case ACE: points += 1;
+			case KING: points += 1;
+			case QUEEN: points += 1;
+			case JACK: points += 1;
+			default: break;
+			}
+		}
 	}
 	
 	public Hand(String parser_string){
@@ -30,6 +44,19 @@ public class Hand {
 		//Clubs
 		for(int i = 0; i < suits[3].length(); i++){
 			cards.add(new Card(suits[3].charAt(i), Suit.CLUB));
+		}
+		
+		points = 0;
+		
+		for (Card c : cards){
+			CardValue cv = c.getValue();
+			switch(cv){
+			case ACE: points += 1;
+			case KING: points += 1;
+			case QUEEN: points += 1;
+			case JACK: points += 1;
+			default: break;
+			}
 		}
 	}
 
@@ -77,20 +104,7 @@ public class Hand {
 	}
 	
 	public int getPoints(){
-		int total = 0;
-		
-		for (Card c : cards){
-			CardValue cv = c.getValue();
-			switch(cv){
-			case ACE: total += 1;
-			case KING: total += 1;
-			case QUEEN: total += 1;
-			case JACK: total += 1;
-			default: break;
-			}
-		}
-		
-		return total;
+		return points;
 	}
 	
 	public int getNumPlayingTricks(){
