@@ -30,6 +30,20 @@ public class Deck {
 			i++;
 		}
 	}
+	
+	public Hand[] getHands(){
+		Hand[] hands = new Hand[4];
+		
+		for(int i = 0; i < 4; i++){
+			ArrayList<Card> h_cards = new ArrayList<Card>();
+			for(int j = 0; j < 13; j++){
+				h_cards.add(cards[i * 13 + j]);
+			}
+			hands[i] = new Hand(h_cards);
+		}
+		
+		return hands;
+	}
 
 	public Card[] getCards() {
 		return cards;
