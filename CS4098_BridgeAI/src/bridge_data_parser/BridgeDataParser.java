@@ -45,7 +45,7 @@ public class BridgeDataParser {
 
 				if (s_hand.contains(":")){
 					//Denotes first hand listed.
-					td.setDeal_start_position(Position.getFromChar(s_hand.charAt(0)));
+					td.setFirst_hand_position(Position.getFromChar(s_hand.charAt(0)));
 					s_hand = s_hand.substring(2, s_hand.length());
 				}
 				hands[i] = new Hand(s_hand);

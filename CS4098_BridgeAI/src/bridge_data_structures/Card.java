@@ -44,6 +44,7 @@ public class Card {
 	
 	public boolean isHigherThan(Card card){
 		if (card == null) return true;
+		if(card.getValue() == value) return false;
 		//Returns whether given parameter card has a higher value
 		switch(this.value){
 		case TWO: 	if (card.getValue() == CardValue.THREE) return false;

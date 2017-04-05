@@ -27,7 +27,7 @@ public class BridgeAI {
 		BridgeDataParser bdp = new BridgeDataParser("list10.txt");
 		ArrayList<TrainingData> data = bdp.getTrainingData();
 		
-		PlayTrainingRound ptr = new PlayTrainingRound(data.get(2));
+		PlayTrainingRound ptr = new PlayTrainingRound(data.get(9));
 		ptr.print();
 
 		UserIO.close();

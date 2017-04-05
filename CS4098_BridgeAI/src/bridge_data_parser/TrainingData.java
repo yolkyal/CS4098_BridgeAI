@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 public class TrainingData {
 	Hand[] hands;
-	int starting_position;
+	int starting_index;
 	Contract best_contract;
 	ArrayList<Card> play_sequence;
-	int deal_start_position;
+	int first_hand_position;
 	
 	public TrainingData(Hand[] hands, int starting_position, Contract best_contract, ArrayList<Card> play_sequence) {
 		this.hands = hands;
-		this.starting_position = starting_position;
+		this.starting_index = starting_index;
 		this.best_contract = best_contract;
 		this.play_sequence = play_sequence;
 	}
@@ -22,7 +22,7 @@ public class TrainingData {
 			hands[i].display();
 		}
 		System.out.println("----------------");
-		System.out.println(starting_position);
+		System.out.println(starting_index);
 		System.out.println("----------------");
 		System.out.println(best_contract.toString());
 		System.out.println("----------------");
@@ -43,12 +43,12 @@ public class TrainingData {
 		this.hands = hands;
 	}
 
-	public int getStarting_position() {
-		return starting_position;
+	public int getStarting_index() {
+		return starting_index;
 	}
 
-	public void setStarting_position(int starting_position) {
-		this.starting_position = starting_position;
+	public void setStarting_index(int starting_index) {
+		this.starting_index = starting_index;
 	}
 
 	public Contract getBest_contract() {
@@ -70,18 +70,19 @@ public class TrainingData {
 		Card card = play_sequence.get(0);
 		for(int i = 0; i < hands.length; i++){
 			if(hands[i].contains(card)){
-				starting_position = i;
+				starting_index = i;
 				return;
 			}
 		}
 	}
 
-	public int getDeal_start_position() {
-		return deal_start_position;
+	public int getFirst_hand_position() {
+		return first_hand_position;
 	}
 
-	public void setDeal_start_position(int deal_start_position) {
-		this.deal_start_position = deal_start_position;
+	public void setFirst_hand_position(int first_hand_position) {
+		this.first_hand_position = first_hand_position;
 	}
+
 	
 }

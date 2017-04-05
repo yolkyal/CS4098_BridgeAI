@@ -5,40 +5,54 @@ import java.util.ArrayList;
 import bridge_data_structures.Card;
 import bridge_data_structures.Hand;
 import bridge_data_structures.Position;
+import bridge_data_structures.Suit;
 import neural_network.Vector52;
 
 public class PlayTrainingRound {
 	
 	TrainingData training_data;
 	ArrayList<PlayTrainingData> al_play_training_data;
+	int starting_index;
+	int first_hand_position;
 	
 	public PlayTrainingRound(TrainingData training_data){
 		this.training_data = training_data;
 		calculateListOfPlayTrainingData();
+		
+		
 	}
 	
 	private ArrayList<PlayTrainingData> calculateListOfPlayTrainingData(){
 		al_play_training_data = new ArrayList<PlayTrainingData>();
 		
 		ArrayList<Card> play_sequence = training_data.getPlay_sequence();
-		int position = training_data.getStarting_position();
 		Vector52 cards_played_this_round = new Vector52();
 		Vector52 cards_played_this_trick = new Vector52();
+		
+		starting_index = training_data.getStarting_index();
+		first_hand_position = training_data.getFirst_hand_position();
+		
 		
 		//Change hands into vectors
 		Hand[] hands = training_data.getHands();
 		Vector52[] v_hands = new Vector52[4];
 		
-		int j = training_data.getDeal_start_position();
+		int hand_position = training_data.getFirst_hand_position();
 		for(int i = 0; i < 4; i++){
-			v_hands[i] = new Vector52(hands[j]);
-			j = Position.getLeft(j);
+			v_hands[hand_position] = new Vector52(hands[i]);
+			hand_position = Position.getLeft(hand_position);
+		}
+		
+		int position = training_data.getFirst_hand_position();
+		for(int i = 0; i < training_data.getStarting_index(); i++){
+			position = Position.getLeft(position);
 		}
 		
 		//Run through every play instance in this training data
 		int trick_turn = 0;
 		int winning_position = position;
 		Card winning_card = null;
+		Suit trick_suit = null;
 		for(Card card : play_sequence){
 			PlayTrainingData td = new PlayTrainingData();
 			
@@ -52,16 +66,22 @@ public class PlayTrainingRound {
 			v_hands[position].takeCard(card);
 			cards_played_this_round.addCard(card);
 			cards_played_this_trick.addCard(card);
-			if(card.isHigherThan(winning_card)){
+			
+			if(trick_suit == null){
+				trick_suit = card.getSuit();
+			}
+			
+			if(card.getSuit() == trick_suit && card.isHigherThan(winning_card)){
 				winning_card = card;
 				winning_position = position;
 			}
 			
-			trick_turn += 1;	
+			trick_turn += 1;
 			if(trick_turn == 4){
 				position = winning_position;
 				cards_played_this_trick = new Vector52();
 				winning_card = null;
+				trick_suit = null;
 				trick_turn = 0;
 			}
 			else{
@@ -76,6 +96,9 @@ public class PlayTrainingRound {
 	}
 	
 	public void print(){
+		System.out.println("Starting index: " + starting_index);
+		System.out.println("First hand pos: " + first_hand_position);
+		
 		for(PlayTrainingData ptd : al_play_training_data){
 			ptd.getHand().print();
 			ptd.getCards_played_this_round().print();
