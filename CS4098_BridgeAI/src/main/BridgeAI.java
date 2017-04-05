@@ -24,11 +24,8 @@ public class BridgeAI {
 	public static void main(String[] args) {
 		UserIO.open();
 		
-		BridgeDataParser bdp = new BridgeDataParser("list10.txt");
-		ArrayList<TrainingData> data = bdp.getTrainingData();
-		
-		PlayTrainingRound ptr = new PlayTrainingRound(data.get(9));
-		ptr.print();
+		NeuralNetwork playNeuralNetwork = new NeuralNetwork(156, 52, 2, 16);
+		NeuralNetwork bidNeuralNetwork = new NeuralNetwork(208, 36, 2, 16);
 
 		UserIO.close();
 	}

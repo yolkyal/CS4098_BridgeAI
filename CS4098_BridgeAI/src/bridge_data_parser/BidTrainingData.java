@@ -1,56 +1,38 @@
 package bridge_data_parser;
 
+import bridge_data_structures.Hand;
+import bridge_data_structures.Position;
+import neural_network.Vector208;
 import neural_network.Vector32;
 import neural_network.Vector52;
 
 public class BidTrainingData {
 	int starting_position;
-	Vector52 hand1;
-	Vector52 hand2;
-	Vector52 hand3;
-	Vector52 hand4;
+	Vector52[] v_hands;
 	Vector32 best_contract;
 	
 	public BidTrainingData(TrainingData training_data){
 		
+		//Change hands into vectors
+		Hand[] hands = training_data.getHands();
+		v_hands = new Vector52[4];
 		
-		hand1 = new Vector52();
-		hand2 = new Vector52();
-		hand3 = new Vector52();
-		hand4 = new Vector52();
-		best_contract = new Vector32();
+		int hand_position = training_data.getFirst_hand_position();
+		for(int i = 0; i < 4; i++){
+			v_hands[hand_position] = new Vector52(hands[i]);
+			hand_position = Position.getLeft(hand_position);
+		}
+		
+		best_contract = new Vector32(training_data.getBest_contract());
+		
 	}
-
-	public Vector52 getHand1() {
-		return hand1;
+	
+	public Vector208 getInputVector(){
+		return new Vector208(v_hands[0], v_hands[1], v_hands[2], v_hands[3]);
 	}
-
-	public void setHand1(Vector52 hand1) {
-		this.hand1 = hand1;
-	}
-
-	public Vector52 getHand2() {
-		return hand2;
-	}
-
-	public void setHand2(Vector52 hand2) {
-		this.hand2 = hand2;
-	}
-
-	public Vector52 getHand3() {
-		return hand3;
-	}
-
-	public void setHand3(Vector52 hand3) {
-		this.hand3 = hand3;
-	}
-
-	public Vector52 getHand4() {
-		return hand4;
-	}
-
-	public void setHand4(Vector52 hand4) {
-		this.hand4 = hand4;
+	
+	public Vector32 getOutputVector(){
+		return best_contract;
 	}
 
 	public Vector32 getBest_contract() {

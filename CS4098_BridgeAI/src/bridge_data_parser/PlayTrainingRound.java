@@ -6,6 +6,7 @@ import bridge_data_structures.Card;
 import bridge_data_structures.Hand;
 import bridge_data_structures.Position;
 import bridge_data_structures.Suit;
+import neural_network.Vector156;
 import neural_network.Vector52;
 
 public class PlayTrainingRound {
@@ -26,12 +27,8 @@ public class PlayTrainingRound {
 		al_play_training_data = new ArrayList<PlayTrainingData>();
 		
 		ArrayList<Card> play_sequence = training_data.getPlay_sequence();
-		Vector52 cards_played_this_round = new Vector52();
-		Vector52 cards_played_this_trick = new Vector52();
-		
 		starting_index = training_data.getStarting_index();
 		first_hand_position = training_data.getFirst_hand_position();
-		
 		
 		//Change hands into vectors
 		Hand[] hands = training_data.getHands();
@@ -53,6 +50,8 @@ public class PlayTrainingRound {
 		int winning_position = position;
 		Card winning_card = null;
 		Suit trick_suit = null;
+		Vector52 cards_played_this_round = new Vector52();
+		Vector52 cards_played_this_trick = new Vector52();
 		for(Card card : play_sequence){
 			PlayTrainingData td = new PlayTrainingData();
 			

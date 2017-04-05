@@ -1,5 +1,6 @@
 package bridge_data_parser;
 
+import neural_network.Vector156;
 import neural_network.Vector52;
 
 public class PlayTrainingData {
@@ -17,6 +18,14 @@ public class PlayTrainingData {
 
 	public Vector52 getHand() {
 		return hand;
+	}
+	
+	public Vector156 getInputVector(){
+		return new Vector156(hand, cards_played_this_round, cards_played_this_trick);
+	}
+	
+	public Vector52 getOutputVector(){
+		return best_card;
 	}
 
 	public void setHand(Vector52 hand) {
