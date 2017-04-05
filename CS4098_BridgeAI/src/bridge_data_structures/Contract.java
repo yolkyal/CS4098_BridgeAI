@@ -12,7 +12,10 @@ public class Contract {
 	}
 	
 	public Contract(String[] parser_tokens){
-		number = (int)parser_tokens[0].charAt(0);
+		
+		//System.out.println(parser_tokens[0]);
+		
+		number = Character.getNumericValue(parser_tokens[0].charAt(0));
 		suit = Card.convertToSuit(parser_tokens[0].charAt(1));
 		declarerPosition = convertToPosition(parser_tokens[1].charAt(0));
 	}

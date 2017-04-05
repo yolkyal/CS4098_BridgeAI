@@ -8,7 +8,18 @@ import bridge_data_structures.Hand;
 
 public class RDealGenerator {
 	
-	public static Hand[] generateRDeals(ArrayList<PlayerConstraint> playerConstraints){
+	public static ArrayList<Hand[]> generateRDeals(ArrayList<PlayerConstraint> player_constraints, int number_of_deals){
+		ArrayList<Hand[]> rdeals = new ArrayList<Hand[]>();
+		
+		for(int i = 0; i < number_of_deals; i++){
+			Hand[] rdeal = generateRDeal(player_constraints);
+			rdeals.add(rdeal);
+		}
+		
+		return rdeals;
+	}
+	
+	public static Hand[] generateRDeal(ArrayList<PlayerConstraint> playerConstraints){
 		Deck deck = new Deck();
 		deck.shuffle();
 		Hand[] hands = deck.getHands();
@@ -16,8 +27,12 @@ public class RDealGenerator {
 		boolean validHands = false;
 		
 		while(!validHands){
+			
 			//Simulated annealing
 			switchTwoRandomCards(hands);
+			for(Hand hand : hands){
+				hand.calculatePointsAndBalance();
+			}
 			
 			validHands = true;
 			for(PlayerConstraint pc : playerConstraints){
@@ -32,13 +47,14 @@ public class RDealGenerator {
 	}
 	
 	private static void switchTwoRandomCards(Hand[] hands){
-		//Get two unique card indexes
+		//Get two unique random card indexes
 		int rand1 = (int)(Math.random() * 52);
-		int rand2 = rand1;
+		int rand2 = (int)(Math.random() * 52);
 		while(rand2 == rand1){
 			rand2 = (int)(Math.random() * 52);
 		}
 		
+		//And swap them
 		Card card1 = hands[(rand1 / 13)].getCards().get(rand1 % 13);
 		Card card2 = hands[(rand2 / 13)].getCards().get(rand2 % 13);
 		Card tmp = card1;

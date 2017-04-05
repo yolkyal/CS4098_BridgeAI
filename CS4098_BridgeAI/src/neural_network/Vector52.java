@@ -5,11 +5,33 @@ import bridge_data_structures.*;
 public class Vector52 {
 	private int[] vector;
 	
-	public Vector52(Hand hand){
+	public Vector52(){
 		vector = new int[52];
-		
+	}
+	
+	public Vector52(Card card){
+		vector = new int[52];
+		vector[card.getVector52Index()] = 1;
+	}
+	
+ 	public Vector52(Hand hand){
+		vector = new int[52];
+		setVectorFromHand(hand);
+	}
+ 	
+ 	public Vector52 deepCopy(){
+ 		Vector52 copy_vector = new Vector52();
+ 		int[] copy_ints = copy_vector.getVector();
+ 		for(int i = 0; i < 52; i++){
+ 			copy_ints[i] = vector[i];
+ 		}
+ 		copy_vector.setVector(copy_ints);
+ 		return copy_vector;
+ 	}
+	
+	private void setVectorFromHand(Hand hand){
 		for(Card card : hand.getCards()){
-			int vector_index = getSuitAddition(card.getSuit()) + getCardValueAddition(card.getValue());
+			int vector_index = card.getVector52Index();
 			vector[vector_index] = 1;
 		}
 	}
@@ -18,32 +40,27 @@ public class Vector52 {
 		return vector;
 	}
 	
-	private int getSuitAddition(Suit suit){
-		switch(suit){
-		case SPADE: return 0;
-		case HEART: return 13;
-		case DIAMOND: return 26;
-		case CLUB: return 39;
-		default: return -1;
-		}
+	public void setVector(int[] vector){
+		this.vector = vector;
 	}
 	
-	private int getCardValueAddition(CardValue cv){
-		switch(cv){
-		case TWO: 	return 12;
-		case THREE: return 11;
-		case FOUR:	return 10;
-		case FIVE:	return 9;
-		case SIX:	return 8;
-		case SEVEN:	return 7;
-		case EIGHT:	return 6;
-		case NINE:	return 5;
-		case TEN:	return 4;
-		case JACK:	return 3;
-		case QUEEN:	return 2;
-		case KING:	return 1;
-		case ACE: return 0;
-		default: return -1;
-		}
+	public void setHand(Hand hand){
+		setVectorFromHand(hand);
 	}
+	
+	public void addCard(Card card){
+		vector[card.getVector52Index()] = 1;
+	}
+	
+	public void takeCard(Card card){
+		vector[card.getVector52Index()] = 0;
+	}
+	
+	public void print(){
+		for(int i = 0; i < 52; i++){
+			System.out.print(vector[i]);
+		}
+		System.out.println();
+	}
+	
 }

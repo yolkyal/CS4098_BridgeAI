@@ -43,9 +43,11 @@ public class BridgeDataParser {
 			for(int i = 0; i < hands_string.length; i++){
 				String s_hand = hands_string[i];
 
-				//Check for starting player
-				if (s_hand.contains(":")) td.setStarting_position(Position.getFromChar(s_hand.charAt(0)));
-				
+				if (s_hand.contains(":")){
+					//Denotes first hand listed.
+					td.setDeal_start_position(Position.getFromChar(s_hand.charAt(0)));
+					s_hand = s_hand.substring(2, s_hand.length());
+				}
 				hands[i] = new Hand(s_hand);
 			}
 			td.setHands(hands);
@@ -58,14 +60,18 @@ public class BridgeDataParser {
 			line = scanner.nextLine();
 			String[] valuations = line.split("\"");
 			valuations = valuations[3].split("-");
-			Contract contract = new Contract(valuations);
+			Contract best_contract = new Contract(valuations);
+			td.setBest_contract(best_contract);
 			
 			//Play sequence of this round
 			line = scanner.nextLine();
 			String[] play_string = line.split("\"");
-			ArrayList<Card> cards = Card.parseCardSequence(play_string[1]);
+			ArrayList<Card> card_sequence = Card.parseCardSequence(play_string[1]);
+			td.setPlay_sequence(card_sequence);
 			
 			scanner.nextLine();
+			
+			al_training_data.add(td);
 		}
 			
 		scanner.close();

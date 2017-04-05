@@ -21,34 +21,36 @@ public class Hand {
 			default: break;
 			}
 		}
+		
+		calculatePointsAndBalance();
 	}
 	
 	public Hand(String parser_string){
+		/*Set up hand using a string of the form "KJT.987.65.AQ732"
+		 * where each char denotes a card and '.' separates the suits
+		 * in declining order (Spade to Club). */
+		
 		cards = new ArrayList<Card>();
-		String[] suits = parser_string.split("\\.");
 		
-		//Spades
-		for(int i = 0; i < suits[0].length(); i++){
-			cards.add(new Card(suits[0].charAt(i), Suit.SPADE));
-		}
-		
-		//Hearts
-		for(int i = 0; i < suits[1].length(); i++){
-			cards.add(new Card(suits[1].charAt(i), Suit.HEART));
-		}
-				
-		//Diamonds
-		for(int i = 0; i < suits[2].length(); i++){
-			cards.add(new Card(suits[2].charAt(i), Suit.DIAMOND));
-		}
-				
-		//Clubs
-		for(int i = 0; i < suits[3].length(); i++){
-			cards.add(new Card(suits[3].charAt(i), Suit.CLUB));
+		Suit suit = Suit.SPADE;
+		for(int i = 0; i < parser_string.length(); i++){
+			char c = parser_string.charAt(i);
+			if(c == '.'){
+				suit = next(suit);
+				continue;
+			}
+			else{
+				cards.add(new Card(c, suit));
+			}
 		}
 		
+		calculatePointsAndBalance();
+	}
+	
+	public void calculatePointsAndBalance(){
+		
+		//Calculate hand points
 		orig_points = 0;
-		
 		for (Card c : cards){
 			CardValue cv = c.getValue();
 			switch(cv){
@@ -60,10 +62,11 @@ public class Hand {
 			}
 		}
 		
+		//Calculate balance
 		boolean found_one_doubleton = false;
 		boolean isBalanced = true;
-		for (Suit suit : Suit.values()){
-			int num_in_suit = getNumInSuit(suit);
+		for (Suit suit1 : Suit.values()){
+			int num_in_suit = getNumInSuit(suit1);
 			
 			if (num_in_suit < 2){
 				isBalanced = false;
@@ -78,6 +81,23 @@ public class Hand {
 			}
 		}
 		orig_balanced = isBalanced;
+	}
+	
+	public boolean contains(Card card){
+		for(Card c : cards){
+			if(c.getValue() == card.getValue() && c.getSuit() == card.getSuit())
+				return true;
+		}
+		return false;
+	}
+	
+	private Suit next(Suit suit){
+		switch(suit){
+		case SPADE: return Suit.HEART;
+		case HEART: return Suit.DIAMOND;
+		case DIAMOND: return Suit.CLUB;
+		default: return null;
+		}
 	}
 
 	public ArrayList<Card> getCards() {

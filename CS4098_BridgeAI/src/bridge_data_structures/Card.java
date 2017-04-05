@@ -43,6 +43,7 @@ public class Card {
 	}
 	
 	public boolean isHigherThan(Card card){
+		if (card == null) return true;
 		//Returns whether given parameter card has a higher value
 		switch(this.value){
 		case TWO: 	if (card.getValue() == CardValue.THREE) return false;
@@ -101,5 +102,38 @@ public class Card {
 		}
 		
 		return cards;
+	}
+	
+	public int getVector52Index(){
+		return getSuitAddition(suit) + getCardValueAddition(value);
+	}
+	
+	private int getSuitAddition(Suit suit){
+		switch(suit){
+		case SPADE: return 0;
+		case HEART: return 13;
+		case DIAMOND: return 26;
+		case CLUB: return 39;
+		default: return -1;
+		}
+	}
+	
+	private int getCardValueAddition(CardValue cv){
+		switch(cv){
+		case TWO: 	return 12;
+		case THREE: return 11;
+		case FOUR:	return 10;
+		case FIVE:	return 9;
+		case SIX:	return 8;
+		case SEVEN:	return 7;
+		case EIGHT:	return 6;
+		case NINE:	return 5;
+		case TEN:	return 4;
+		case JACK:	return 3;
+		case QUEEN:	return 2;
+		case KING:	return 1;
+		case ACE: return 0;
+		default: return -1;
+		}
 	}
 }
