@@ -3,24 +3,25 @@ package neural_network;
 import bridge_data_structures.Contract;
 import bridge_data_structures.Suit;
 
-public class Vector32 {
+public class Vector39 {
 	private int[] vector;
 	int bid_index;
 	int position_index;
 	
-	public Vector32(){
-		vector = new int[32];
+	public Vector39(){
+		vector = new int[39];
 		bid_index = 0;
 		position_index = 0;
 	}
 	
-	public Vector32(Contract contract){
+	public Vector39(Contract contract){
+		vector = new int[39];
 		setIndexesAndVector(contract);
  	}
 	
 	private void setIndexesAndVector(Contract contract){
 		bid_index = getSuitAddition(contract.getSuit()) + (contract.getNumber() - 1);
-		position_index = 28 + contract.getDeclarerPosition();
+		position_index = 35 + contract.getDeclarerPosition();
 		vector[bid_index] = 1;
 		vector[position_index] = 1;
 	}
@@ -38,6 +39,8 @@ public class Vector32 {
 	}
 	
 	private int getSuitAddition(Suit suit){
+		if(suit == null) return  28;
+		
 		switch(suit){
 		case CLUB: return 0;
 		case DIAMOND: return 7;

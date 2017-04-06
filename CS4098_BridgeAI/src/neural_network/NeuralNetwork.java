@@ -132,8 +132,7 @@ public class NeuralNetwork {
 		for(int i = 0; i < expected_results.length; i++){
 			int node_index = output_layer.getStart_index() + i;
 			deltas[node_index] = derivateSigmoidActivation(getNodeSumInput(node_index)) * 
-					(expected_results[i] - nodes[node_index]);
-			
+					(expected_results[i] - nodes[node_index]);	
 		}
 		
 		for(int i = layers.size() - 2; i >= 0; i--){
@@ -220,13 +219,18 @@ public class NeuralNetwork {
 		return -1;
 	}
 	
-	static double derivateSigmoidActivation(double x){
+	private static double derivateSigmoidActivation(double x){
 		double sa = sigmoidActivation(x);
 		return sa * (1d - sa);
 	}
 	
-	static double sigmoidActivation(double x){
+	private static double sigmoidActivation(double x){
 		return (1d / (1d + Math.pow(Math.E, (-x / CURVE_P_VALUE))));
+	}
+	
+	private static double thresholdActivation(double x){
+		if(x >= 0.5) return 1;
+		else return 0;
 	}
 	
 	private static double getRandomWeight(){

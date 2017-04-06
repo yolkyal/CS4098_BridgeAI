@@ -10,6 +10,7 @@ import java.util.Scanner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bridge_data_parser.BidTrainingData;
 import bridge_data_parser.BridgeDataParser;
 import bridge_data_parser.PlayTrainingData;
 import bridge_data_parser.PlayTrainingRound;
@@ -24,8 +25,30 @@ public class BridgeAI {
 	public static void main(String[] args) {
 		UserIO.open();
 		
+		BridgeDataParser bdp = new BridgeDataParser("list1000.txt");
+		ArrayList<TrainingData> al_td = bdp.getTrainingData();
+		
+		ArrayList<PlayTrainingRound> al_ptr = new ArrayList<PlayTrainingRound>();
+		ArrayList<BidTrainingData> al_btd = new ArrayList<BidTrainingData>();
+		for(TrainingData td : al_td){
+			al_ptr.add(new PlayTrainingRound(td));
+			al_btd.add(new BidTrainingData(td));
+		}
+		
 		NeuralNetwork playNeuralNetwork = new NeuralNetwork(156, 52, 2, 16);
-		NeuralNetwork bidNeuralNetwork = new NeuralNetwork(208, 36, 2, 16);
+		//NeuralNetwork bidNeuralNetwork = new NeuralNetwork(208, 36, 2, 16);
+		
+		int total_tests = 0;
+		for(PlayTrainingRound ptr : al_ptr){
+			ArrayList<PlayTrainingData> al_ptd = ptr.getListPlayTrainingData();
+			
+			for(PlayTrainingData ptd : al_ptd){
+				total_tests++;
+			}
+			
+		}
+		System.out.println(total_tests);
+		
 
 		UserIO.close();
 	}
