@@ -78,7 +78,7 @@ public class BiddingAI {
 	
 	static OrConstraint threeNTBiddingConditions = new OrConstraint(balanced, longMinor);
 	
-	public Contract getBid(int position, Hand hand, ArrayList<PlayerConstraint> 
+	public static Contract getBid(int position, Hand hand, ArrayList<PlayerConstraint> 
 	ls_player_constraints, ArrayList<Contract> ls_bids){
 		
 		//OPENING BID

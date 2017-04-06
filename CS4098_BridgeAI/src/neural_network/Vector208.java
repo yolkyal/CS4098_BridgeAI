@@ -21,4 +21,12 @@ public class Vector208 {
 			vector[i+156] = v4.getVector()[i+156];
 		}
 	}
+	
+	public double[] getDoubleVector(){
+		double[] result = new double[208];
+		for(int i = 0; i < 208; i++){
+			result[i] = (double)vector[i];
+		}
+		return result;
+	}
 }

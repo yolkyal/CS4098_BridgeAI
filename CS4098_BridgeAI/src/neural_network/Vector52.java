@@ -1,5 +1,7 @@
 package neural_network;
 
+import java.util.ArrayList;
+
 import bridge_data_structures.*;
 
 public class Vector52 {
@@ -18,6 +20,21 @@ public class Vector52 {
 		vector = new int[52];
 		setVectorFromHand(hand);
 	}
+ 	
+ 	public Vector52(ArrayList<Card> cards){
+ 		vector = new int[52];
+ 		for(Card card : cards){
+			int vector_index = card.getVector52Index();
+			vector[vector_index] = 1;
+		}
+ 	}
+ 	
+ 	public Vector52(double[] v_cards){
+ 		vector = new int[52];
+ 		for(int i = 0; i < 52; i++){
+ 			vector[i] = (int)v_cards[i];
+ 		}
+ 	}
  	
  	public Vector52 deepCopy(){
  		Vector52 copy_vector = new Vector52();
@@ -61,6 +78,14 @@ public class Vector52 {
 			System.out.print(vector[i]);
 		}
 		System.out.println();
+	}
+	
+	public double[] getDoubleVector(){
+		double[] result = new double[52];
+		for(int i = 0; i < 52; i++){
+			result[i] = (double)vector[i];
+		}
+		return result;
 	}
 	
 }

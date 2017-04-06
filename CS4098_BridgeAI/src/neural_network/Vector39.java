@@ -19,6 +19,13 @@ public class Vector39 {
 		setIndexesAndVector(contract);
  	}
 	
+	public Vector39(double[] v_cards){
+ 		vector = new int[39];
+ 		for(int i = 0; i < 39; i++){
+ 			vector[i] = (int)v_cards[i];
+ 		}
+ 	}
+	
 	private void setIndexesAndVector(Contract contract){
 		bid_index = getSuitAddition(contract.getSuit()) + (contract.getNumber() - 1);
 		position_index = 35 + contract.getDeclarerPosition();
@@ -58,5 +65,13 @@ public class Vector39 {
 		case 3: return Suit.SPADE;
 		default: return null;
 		}
+	}
+	
+	public double[] getDoubleVector(){
+		double[] result = new double[39];
+		for(int i = 0; i < 39; i++){
+			result[i] = (double)vector[i];
+		}
+		return result;
 	}
 }

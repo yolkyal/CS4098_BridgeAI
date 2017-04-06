@@ -48,15 +48,28 @@ public class Round {
 	
 	public Contract runAuction(int dealer_pos){
 		int bid_pos = dealer_pos;
-		
 		int consec_passes = 0;
 		Contract contract = null;
+		ArrayList<Contract> ls_bids = new ArrayList<Contract>();
+		ArrayList<PlayerConstraint> ls_player_constraints = new ArrayList<PlayerConstraint>();
 		
-		System.out.println("\n" + Position.getName(bid_pos) + " BID");
-		players[bid_pos].getHand().display();
 		while(true){
+			System.out.println("\n" + Position.getName(bid_pos) + " BID");
+			players[bid_pos].getHand().display();
 			
-			Contract bid = UserIO.getBidInput(bid_pos, contract);
+			if (contract != null)
+				System.out.println("Current bid is " + contract.toString());
+			
+			Contract bid = null;
+			if(players[bid_pos].isHumanPlayer()){
+				bid = UserIO.getBidInput(bid_pos, contract);
+			}
+			else{
+				bid = BiddingAI.getBid(bid_pos, players[bid_pos].getHand(), ls_player_constraints, ls_bids);
+				if (bid == null){
+					bid = BridgeAI.getBid(contract, ls_player_constraints);
+				}
+			}
 			
 			int value = bid.getNumber();
 			if (value == -1) consec_passes++;

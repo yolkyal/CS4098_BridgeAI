@@ -16,11 +16,19 @@ import bridge_data_parser.PlayTrainingData;
 import bridge_data_parser.PlayTrainingRound;
 import bridge_data_parser.TrainingData;
 import bridge_data_structures.*;
+import constraints.Constraint;
 import neural_network.NeuralNetwork;
+import neural_network.Vector156;
+import neural_network.Vector208;
+import neural_network.Vector39;
 import neural_network.Vector52;
 import user_io.UserIO;
 
 public class BridgeAI {
+	
+	final static int NUM_RDEALS = 1000;
+	static NeuralNetwork playNeuralNetwork;
+	static NeuralNetwork bidNeuralNetwork;
 	
 	public static void main(String[] args) {
 		UserIO.open();
@@ -35,22 +43,78 @@ public class BridgeAI {
 			al_btd.add(new BidTrainingData(td));
 		}
 		
-		NeuralNetwork playNeuralNetwork = new NeuralNetwork(156, 52, 2, 16);
+		playNeuralNetwork = new NeuralNetwork(156, 52, 2, 16);
 		//NeuralNetwork bidNeuralNetwork = new NeuralNetwork(208, 36, 2, 16);
 		
-		int total_tests = 0;
+		System.out.println("Play training starting...");
+		
+		int total_tests = 37491;
+		int test_number = 0;
 		for(PlayTrainingRound ptr : al_ptr){
 			ArrayList<PlayTrainingData> al_ptd = ptr.getListPlayTrainingData();
-			
-			for(PlayTrainingData ptd : al_ptd){
-				total_tests++;
+			for(PlayTrainingData ptd : al_ptd){		
+				playNeuralNetwork.train(ptd.getInputVector().getDoubleVector(), 
+						ptd.getOutputVector().getDoubleVector(), 
+						test_number, total_tests);
+				
+				test_number++;
 			}
-			
 		}
-		System.out.println(total_tests);
+		System.out.println("Play training completed.");
+		
+		System.out.println("Play testing starting...");
+		int total_rounds = 10;
+		test_number = 0;
+		for(int i = 0; i < total_rounds; i++){
+			PlayTrainingRound ptr = al_ptr.get(i);
+			ArrayList<PlayTrainingData> al_ptd = ptr.getListPlayTrainingData();
+			for(PlayTrainingData ptd : al_ptd){
+				
+				double err = playNeuralNetwork.test(ptd.getInputVector().getDoubleVector(), 
+						ptd.getOutputVector().getDoubleVector());
+				
+				System.out.println(test_number + ": " + err);
+				
+				test_number++;
+			}
+		}
+		System.out.println("Play testing completed.");
+		
 		
 
 		UserIO.close();
+	}
+	
+	public static Vector52 getPlay(Hand hand, ArrayList<Card> cards_played_this_round, ArrayList<Card> cards_played_this_trick){
+		Vector52 v_hand = new Vector52(hand);
+		Vector52 round_cards = new Vector52(cards_played_this_round);
+		Vector52 trick_cards = new Vector52(cards_played_this_trick);
+		
+		Vector156 v_input = new Vector156(v_hand, round_cards, trick_cards);
+		double[] output = playNeuralNetwork.getOutput(v_input.getDoubleVector());
+		Vector52 v_card = new Vector52(output);
+		
+		return v_card;
+	}
+	
+	public static Contract getBid(Contract cur_contract, ArrayList<PlayerConstraint> ls_constraints){
+		ArrayList<Hand[]> r_hands = RDealGenerator.generateRDeals(ls_constraints, NUM_RDEALS);
+		ArrayList<Vector39> v_contracts = new ArrayList<Vector39>();
+		
+		for(Hand[] hands : r_hands){
+			Vector52 v1 = new Vector52(hands[0]);
+			Vector52 v2 = new Vector52(hands[1]);
+			Vector52 v3 = new Vector52(hands[2]);
+			Vector52 v4 = new Vector52(hands[3]);
+			
+			Vector208 input = new Vector208(v1, v2, v3, v4);
+			double[] output = bidNeuralNetwork.getOutput(input.getDoubleVector());
+			v_contracts.add(new Vector39(output));
+		}
+		
+		//Judgement of which is best...
+		
+		return cur_contract;
 	}
 	
 //	Hand hand = new Hand("AKQ.432.AK.A543");

@@ -20,9 +20,6 @@ public class UserIO {
 		int value;
 		int suit_num = 4;
 		
-		if (cur_contract != null)
-			System.out.println("Current bid is " + cur_contract.toString());
-		
 		while(true){
 			System.out.print("Enter value (1 to 7), -1 pass: ");
 			value = std_in.nextInt();

@@ -80,6 +80,11 @@ public class NeuralNetwork {
 		}
 	}
 	
+	public double[] getOutput(double[] inputs){
+		double[] outputs = propogateForwards(inputs);
+		return outputs;
+	}
+	
 	public void train(double[] inputs, double[] outputs, int test_number, int total_tests){
 		//Train neural network using the given inputs and their corresponding correct outputs
 		propogateForwards(inputs);
