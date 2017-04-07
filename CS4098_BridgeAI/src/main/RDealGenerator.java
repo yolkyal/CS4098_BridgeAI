@@ -25,8 +25,8 @@ public class RDealGenerator {
 		Hand[] hands = deck.getHands();
 		
 		boolean validHands = false;
-		
 		while(!validHands){
+			int num_satisfied = 0;	
 			
 			//Simulated annealing
 			switchTwoRandomCards(hands);
@@ -39,6 +39,9 @@ public class RDealGenerator {
 				int position = pc.getPosition();
 				if(!pc.getConstraint().satisfiedBy(hands[position])){
 					validHands = false;
+				}
+				else{
+					num_satisfied += 1;
 				}
 			}
 		}
