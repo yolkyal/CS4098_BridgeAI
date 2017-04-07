@@ -25,8 +25,6 @@ public class ConstraintTests {
 		assertTrue(bc2.satisfiedBy(hand2));
 		assertFalse(bc1.satisfiedBy(hand3));
 		assertTrue(bc1.satisfiedBy(hand4));
-		
-		
 	}
 	
 	@Test

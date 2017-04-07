@@ -20,7 +20,32 @@ public class Card {
 		this.value = convertToCardValue(c_value);
 		this.suit = convertToSuit(c_suit);
 	}
-
+	
+	public Card(int v52_card_index){
+		value = intToCardValue(v52_card_index % 13);
+		
+		for(int i = 0; i < 13; i++){
+			if (v52_card_index == i){
+				suit = Suit.SPADE;
+			}
+		}
+		for(int i = 13; i < 26; i++){
+			if (v52_card_index == i){
+				suit = Suit.HEART;
+			}
+		}
+		for(int i = 26; i < 39; i++){
+			if (v52_card_index == i){
+				suit = Suit.DIAMOND;
+			}
+		}
+		for(int i = 39; i < 52; i++){
+			if (v52_card_index == i){
+				suit = Suit.CLUB;
+			}
+		}
+	}
+	
 	public CardValue getValue() {
 		return value;
 	}
@@ -116,6 +141,25 @@ public class Card {
 		case DIAMOND: return 26;
 		case CLUB: return 39;
 		default: return -1;
+		}
+	}
+	
+	private CardValue intToCardValue(int x){
+		switch(x){
+		case 0: return CardValue.ACE;
+		case 1: return CardValue.KING;
+		case 2: return CardValue.QUEEN;
+		case 3: return CardValue.JACK;
+		case 4: return CardValue.TEN;
+		case 5: return CardValue.NINE;
+		case 6: return CardValue.EIGHT;
+		case 7: return CardValue.SEVEN;
+		case 8: return CardValue.SIX;
+		case 9: return CardValue.FIVE;
+		case 10: return CardValue.FOUR;
+		case 11: return CardValue.THREE;
+		case 12: return CardValue.TWO;
+		default: return null;
 		}
 	}
 	

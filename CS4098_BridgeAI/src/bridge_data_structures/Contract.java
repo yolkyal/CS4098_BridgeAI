@@ -42,7 +42,7 @@ public class Contract {
 	
 	private boolean hasGreaterSuitThan(Contract contract){
 		//Input contract will never have the same suit
-		
+		if(contract == null) return true;
 		if (contract.getSuit() == null) return false;
 		
 		switch(suit){

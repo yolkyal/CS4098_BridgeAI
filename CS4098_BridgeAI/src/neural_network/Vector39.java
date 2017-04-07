@@ -24,11 +24,41 @@ public class Vector39 {
  		for(int i = 0; i < 39; i++){
  			vector[i] = (int)v_cards[i];
  		}
+ 		setIndexesFromVector();
  	}
+	
+	public Vector39(int[] vector){
+		this.vector = vector;
+		setIndexesFromVector();
+	}
+	
+	private void setIndexesFromVector(){
+		for(int i = 0; i < 35; i++){
+			if(vector[i] == 1){
+				bid_index = 1;
+				break;
+			}
+		}
+		for(int i = 35; i < 39; i++){
+			if(vector[i] == 1){
+				position_index = 1;
+				break;
+			}
+		}
+	}
 	
 	private void setIndexesAndVector(Contract contract){
 		bid_index = getSuitAddition(contract.getSuit()) + (contract.getNumber() - 1);
 		position_index = 35 + contract.getDeclarerPosition();
+		vector[bid_index] = 1;
+		vector[position_index] = 1;
+	}
+	
+	public Vector39(int bid_index, int pos_index){
+		this.bid_index = bid_index;
+		this.position_index = pos_index;
+		
+		vector = new int[39];
 		vector[bid_index] = 1;
 		vector[position_index] = 1;
 	}
@@ -74,4 +104,42 @@ public class Vector39 {
 		}
 		return result;
 	}
+	
+	public void print(){
+		for(int i = 0; i < 39; i++){
+			System.out.print(vector[i]);
+		}
+		System.out.println();
+	}
+	
+	public boolean isValidContractVector(){
+		boolean one_found = false;
+		for(int i = 0; i < 35; i++){
+			if (vector[i] == 1){
+				if(!one_found){
+					one_found = true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		if (!one_found) return false;
+		
+		one_found = false;
+		for(int i = 35; i < 39; i++){
+			if (vector[i] == 1){
+				if(!one_found){
+					one_found = true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		if (!one_found) return false;
+		
+		return true;
+	}
+	
 }

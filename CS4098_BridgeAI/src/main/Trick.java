@@ -13,8 +13,10 @@ public class Trick {
 	private Card winning_card;
 	private int winning_player_position;
 	private int turns_played;
+	private ArrayList<Card> cards_played_this_trick;
+	private ArrayList<Card> cards_played_this_round;
 	
-	public Trick(Player[] players, int dummy_position, int leader_position, Suit trump_suit) {
+	public Trick(Player[] players, int dummy_position, int leader_position, Suit trump_suit, ArrayList<Card> cards_played_this_round) {
 		this.players = players;
 		this.dummy_position = dummy_position;
 		this.trump_suit = trump_suit;
@@ -24,11 +26,15 @@ public class Trick {
 		turns_played = 0;
 		winning_card = null;
 		winning_player_position = leader_position;
+		cards_played_this_trick = new ArrayList<Card>();
+		this.cards_played_this_round = cards_played_this_round;
 	}
 
 	public void playTurn(){
 		Hand turn_hand = turn_player.getHand();
 		Card selected_card = null;
+		
+		//System.out.println(dummy_position);
 		
 		if (turn_player.isHumanPlayer() || turn_player_position == dummy_position && 
 				players[Position.getOpposite(turn_player_position)].isHumanPlayer()){
@@ -57,10 +63,22 @@ public class Trick {
 				options = turn_hand.getSuitCards(trick_suit);
 			}
 			if (options.isEmpty()) options = turn_hand.getCards();
+			if (options.size() == 1) selected_card = options.get(0);
 			
-			//Choose random valid card -- this will of course be changed later
-			int rand = (int)(Math.random() * options.size());
-			selected_card = options.get(rand);
+			Card cardToPlay = BridgeAI.getPlay(turn_hand, cards_played_this_round, cards_played_this_trick);
+			
+			for(Card card : options){
+				if (card.getValue() == cardToPlay.getValue() && 
+						card.getSuit() == cardToPlay.getSuit()){
+					selected_card = card;
+					break;
+				}
+			}
+			
+			if(selected_card == null){
+				int rand = (int)(Math.random() * options.size());
+				selected_card = options.get(rand);
+			}
 		}
 		
 		playCard(selected_card);
@@ -92,6 +110,8 @@ public class Trick {
 			if (trick_suit == null) trick_suit = card.getSuit();
 		}
 		
+		cards_played_this_trick.add(card);
+		cards_played_this_round.add(card);
 		turn_player.getHand().getCards().remove(card);
 	}
 	
@@ -112,6 +132,22 @@ public class Trick {
 
 	public int getWinningPlayerPosition() {
 		return winning_player_position;
+	}
+
+	public ArrayList<Card> getCards_played_this_trick() {
+		return cards_played_this_trick;
+	}
+
+	public void setCards_played_this_trick(ArrayList<Card> cards_played_this_trick) {
+		this.cards_played_this_trick = cards_played_this_trick;
+	}
+
+	public ArrayList<Card> getCards_played_this_round() {
+		return cards_played_this_round;
+	}
+
+	public void setCards_played_this_round(ArrayList<Card> cards_played_this_round) {
+		this.cards_played_this_round = cards_played_this_round;
 	}
 	
 }

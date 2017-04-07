@@ -79,66 +79,50 @@ public class BiddingAI {
 	static OrConstraint threeNTBiddingConditions = new OrConstraint(balanced, longMinor);
 	
 	public static Contract getBid(int position, Hand hand, ArrayList<PlayerConstraint> 
-	ls_player_constraints, ArrayList<Contract> ls_bids){
+	ls_player_constraints, ArrayList<Contract> ls_bids, Contract cur_contract){
+		
+		//We are bidding without competition...
+		if(ls_bids.size() % 2 == 1) return new Contract(-1, null, position);
 		
 		//OPENING BID
 		if(ls_bids.isEmpty()){
 			return getOpeningBid(hand, position);
 		}
 		
-		//FIRST OPPONENT BID
-		if(ls_bids.size() == 1){
-			//Overcall, double or pass
-			return new Contract(-1, null, position);
-		}
-		
 		//RESPONDING BIDS
 		if(ls_bids.size() == 2){
-			Contract opening_bid = ls_bids.get(0);
-			Contract opponent1_bid = ls_bids.get(1);
 			
-			//If first opponent passed
-			if(opponent1_bid.getNumber()== -1){
+			Contract opening_bid = ls_bids.get(0);
 				
-				if(opening_bid.getNumber() == 1){
-					
-					if (opening_bid.getSuit() == null){
-						return getResponseTo1NT(hand, position);
-					}
-					else{
-						return getResponseToOneOfASuit(hand, position, opening_bid.getSuit());
-					}
+			if(opening_bid.getNumber() == 1){
+				
+				if (opening_bid.getSuit() == null){
+					return getResponseTo1NT(hand, position);
 				}
-				else if(opening_bid.getNumber() == 2){
-					
-					if(opening_bid.getSuit() == null){
-						return getResponseTo2NT(hand, position);
-					}
-					else if(opening_bid.getSuit() == Suit.CLUB){
-						return getResponseToOpeningTwoClubs(hand, position);
-					}
-					else{
-						return getResponseToTwoOfASuit(hand, position, opening_bid.getSuit());
-					}
-				}
-				else if(opening_bid.getNumber() == 3){
-					if(opening_bid.getSuit() != null){
-						return getResponseToThreeOfASuit(hand, position, opening_bid.getSuit());
-					}
+				else{
+					return getResponseToOneOfASuit(hand, position, opening_bid.getSuit());
 				}
 			}
-			//If first opponent overcalled or doubled
-			else{
+			else if(opening_bid.getNumber() == 2){
 				
+				if(opening_bid.getSuit() == null){
+					return getResponseTo2NT(hand, position);
+				}
+				else if(opening_bid.getSuit() == Suit.CLUB){
+					return getResponseToOpeningTwoClubs(hand, position);
+				}
+				else{
+					return getResponseToTwoOfASuit(hand, position, opening_bid.getSuit());
+				}
+			}
+			else if(opening_bid.getNumber() == 3){
+				if(opening_bid.getSuit() != null){
+					return getResponseToThreeOfASuit(hand, position, opening_bid.getSuit());
+				}
 			}
 			
 			//Pass
 			return new Contract(-1, null, position);
-		}
-		
-		//SECOND OPPONENT BID
-		if(ls_bids.size() == 3){
-			//Overcall, double or pass
 		}
 		
 		//OPENING REBIDS
@@ -173,11 +157,8 @@ public class BiddingAI {
 			}
 		}
 		
-		if(ls_bids.size() % 2 == 1){
-			return new Contract(-1, null, position);
-		}
-		else{
-			//AI BID
+		if(ls_bids.size() > 4){
+			return BridgeAI.getBid(cur_contract, ls_player_constraints, position);
 		}
 		
 		return null;	
@@ -407,14 +388,10 @@ public class BiddingAI {
 			}
 			
 			if(points19OrMore.satisfiedBy(hand)){
-				//Look for a slam after finding a fit
-				
 				//BID AI
+				return null;
 			}
-			
-			
 		}
-		
 		return new Contract(-1, null, position);
 	}
 	

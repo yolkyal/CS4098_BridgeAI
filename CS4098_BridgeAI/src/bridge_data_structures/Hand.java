@@ -183,21 +183,32 @@ public class Hand {
 	}
 	
 	public void display(){
-		for (int i = 0; i < cards.size(); i+=3){
-			Card card = cards.get(i);
-			System.out.print(i + ". " + card.toString() + " ");
-			
-			if ((i + 1) < cards.size()){
-				card = cards.get(i + 1);
-				System.out.print("\t\t" + (i + 1) + ". " + card.toString() + " ");
-			}
-			
-			if ((i + 2) < cards.size()){
-				card = cards.get(i + 2);
-				System.out.print("\t\t" + (i + 2) + ". " + card.toString() + " ");
-			}
-			System.out.println();
+//		for (int i = 0; i < cards.size(); i+=3){
+//			Card card = cards.get(i);
+//			System.out.print(i + ". " + card.toString() + " ");
+//			
+//			if ((i + 1) < cards.size()){
+//				card = cards.get(i + 1);
+//				System.out.print("\t\t" + (i + 1) + ". " + card.toString() + " ");
+//			}
+//			
+//			if ((i + 2) < cards.size()){
+//				card = cards.get(i + 2);
+//				System.out.print("\t\t" + (i + 2) + ". " + card.toString() + " ");
+//			}
+//			System.out.println();
+//		}
+		
+		for(int i = 0; i < cards.size(); i++){
+			System.out.println(i + ". " +  cards.get(i).toString());
 		}
+	}
+	
+	public void sort(){
+		//Sort into descending suit and card value order.
+		
+		
+		
 	}
 	
 }

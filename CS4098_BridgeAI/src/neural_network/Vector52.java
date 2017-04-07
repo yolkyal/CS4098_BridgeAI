@@ -21,6 +21,15 @@ public class Vector52 {
 		setVectorFromHand(hand);
 	}
  	
+ 	public Vector52(int card_index){
+ 		vector = new int[52];
+ 		vector[card_index] = 1;
+ 	}
+ 	
+ 	public Vector52(int[] vector){
+ 		this.vector = vector;
+ 	}
+ 	
  	public Vector52(ArrayList<Card> cards){
  		vector = new int[52];
  		for(Card card : cards){

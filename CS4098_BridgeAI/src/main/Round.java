@@ -15,9 +15,9 @@ public class Round {
 			players[i] = new Player();	//Defaults human_player to false
 		}
 		switch(numHumanPlayers){
-			case 4: players[Position.WEST].setHumanPlayer(true);
-			case 3: players[Position.EAST].setHumanPlayer(true);
-			case 2: players[Position.SOUTH].setHumanPlayer(true);
+			case 4: players[Position.SOUTH].setHumanPlayer(true);
+			case 3: players[Position.WEST].setHumanPlayer(true);
+			case 2: players[Position.EAST].setHumanPlayer(true);
 			case 1: players[Position.NORTH].setHumanPlayer(true);
 		}
 		
@@ -28,15 +28,17 @@ public class Round {
 	
 	public void play(Contract contract){
 		int tricks_won[] = {0, 0, 0, 0};
-		int leader_pos = contract.getDeclarerPosition();
+		int leader_pos = Position.getLeft(contract.getDeclarerPosition());
 		int dummy_pos = Position.getOpposite(contract.getDeclarerPosition());
+		ArrayList<Card> cards_played_this_round = new ArrayList<Card>();
 		
 		for (int trick_num = 0; trick_num < 13; trick_num++){
 			displayTricksWon(tricks_won);
-			Trick trick = new Trick(players, dummy_pos, leader_pos, contract.getSuit());
+			Trick trick = new Trick(players, dummy_pos, leader_pos, contract.getSuit(), cards_played_this_round);
 			while(!trick.isOver()){
 				trick.playTurn();
 			}
+			cards_played_this_round.addAll(trick.getCards_played_this_trick());
 			int winning_player_pos = trick.getWinningPlayerPosition();
 			System.out.println(Position.getName(winning_player_pos) + " wins trick.");
 			tricks_won[winning_player_pos]++;
@@ -44,6 +46,14 @@ public class Round {
 		}
 		System.out.println("\nRound Scores: ");
 		displayTricksWon(tricks_won);
+		
+		if(tricks_won[contract.getDeclarerPosition()] >= (contract.getNumber() + 6)){
+			System.out.println("Contract met!");
+		}
+		else{
+			System.out.println("Contract not met!");
+		}
+		
 	}
 	
 	public Contract runAuction(int dealer_pos){
@@ -58,23 +68,30 @@ public class Round {
 			players[bid_pos].getHand().display();
 			
 			if (contract != null)
-				System.out.println("Current bid is " + contract.toString());
+				System.out.println("Current contract is " + contract.toString());
 			
 			Contract bid = null;
 			if(players[bid_pos].isHumanPlayer()){
 				bid = UserIO.getBidInput(bid_pos, contract);
 			}
 			else{
-				bid = BiddingAI.getBid(bid_pos, players[bid_pos].getHand(), ls_player_constraints, ls_bids);
+				bid = BiddingAI.getBid(bid_pos, players[bid_pos].getHand(), ls_player_constraints, ls_bids, contract);
 				if (bid == null){
-					bid = BridgeAI.getBid(contract, ls_player_constraints);
+					bid = BridgeAI.getBid(contract, ls_player_constraints, bid_pos);
 				}
 			}
 			
 			int value = bid.getNumber();
-			if (value == -1) consec_passes++;
+			if (value == -1){
+				System.out.println(Position.getName(bid_pos) + " passes.");
+				consec_passes++;
+				bid_pos = Position.getLeft(bid_pos);
+				ls_bids.add(bid);
+				ls_player_constraints.add(BiddingAI.getConstraintFromLastBid(ls_bids, bid_pos));
+			}
 			else{	
 				if (bid.isGreaterThan(contract)){
+					contract = bid;
 					consec_passes = 1;
 					
 					if (bid.getSuit() != null){
@@ -86,10 +103,8 @@ public class Round {
 								bid.getNumber() + " "+ "NT");
 					}
 					
-					contract = bid;
 					bid_pos = Position.getLeft(bid_pos);
-					System.out.println("\n" + Position.getName(bid_pos) + " BID");
-					players[bid_pos].getHand().display();
+					ls_bids.add(bid);
 				}
 				else{
 					System.out.println("This bid is not greater than the working contract.\n");
@@ -97,7 +112,10 @@ public class Round {
 			}	
 			if (consec_passes == 4) break;
 		}
-		System.out.println("Final Contract: " + contract.toString());
+		
+		if(contract != null){
+			System.out.println("Final Contract: " + contract.toString());
+		}
 		
 		return contract;
 	}

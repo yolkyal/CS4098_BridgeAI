@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 public class TrainingData {
 	Hand[] hands;
-	int starting_index;
 	Contract best_contract;
 	ArrayList<Card> play_sequence;
+	int starting_index;
 	int first_hand_position;
 	
 	public TrainingData(Hand[] hands, int starting_position, Contract best_contract, ArrayList<Card> play_sequence) {
@@ -65,6 +65,8 @@ public class TrainingData {
 
 	public void setPlay_sequence(ArrayList<Card> play_sequence) {
 		this.play_sequence = play_sequence;
+		
+		if(play_sequence.size() == 0) return;
 		
 		//Set starting position based using first card played
 		Card card = play_sequence.get(0);

@@ -85,6 +85,71 @@ public class NeuralNetwork {
 		return outputs;
 	}
 	
+	public int getBestCardIndex(double[]inputs){
+		double[] d_outputs = propogateForwards(inputs);
+		
+		//Hand contents is described by the first 52 integers in the vector.
+		double greatest_value = 0d;
+		int best_index = 0;
+		
+		for(int i = 0; i < 52; i++){
+			if(inputs[i] == 1){
+				if (d_outputs[i] > greatest_value){
+					greatest_value = d_outputs[i];
+					best_index = i;
+				}
+			}
+		}
+		
+		return best_index;
+	}
+	
+	public int[] getIntegerOutput(double[] inputs){
+		double[] d_outputs = propogateForwards(inputs);
+		int[] int_outputs = new int[d_outputs.length];
+		for(int i = 0; i < d_outputs.length; i++){
+			int_outputs[i] = (int)Math.round(d_outputs[i]);
+		}
+		return int_outputs;
+	}
+	
+	public int getGreatestOutputIndex(double[] inputs){
+		double[] d_outputs = propogateForwards(inputs);
+		int greatest_index = 0;
+		double greatest_value = 0d;
+		for(int i = 0; i < d_outputs.length; i++){
+			if (inputs[i] > greatest_value){
+				greatest_value = inputs[i];
+				greatest_index = i;
+			}
+		}
+		return greatest_index;
+	}
+	
+	public Vector39 getGreatestContractPair(double[] inputs){
+		double[] d_outputs = propogateForwards(inputs);
+		int bid_index = 0;
+		int pos_index = 0;
+		
+		double greatest_value = 0d;
+		for(int i = 0; i < 35; i++){
+			if (d_outputs[i] > greatest_value){
+				greatest_value = inputs[i];
+				bid_index = i;
+			}
+		}
+		
+		greatest_value = 0d;
+		for(int i = 35; i < 39; i++){
+			if (d_outputs[i] > greatest_value){
+				greatest_value = inputs[i];
+				pos_index = i;
+			}
+		}
+		
+		return new Vector39(bid_index, pos_index);
+	}
+	
 	public void train(double[] inputs, double[] outputs, int test_number, int total_tests){
 		//Train neural network using the given inputs and their corresponding correct outputs
 		propogateForwards(inputs);
@@ -126,9 +191,7 @@ public class NeuralNetwork {
 		double[] outputs = new double[output_layer.getSize()];
 		for(int i = 0; i < outputs.length; i++){
 			outputs[i] = nodes[output_layer.getStart_index() + i];
-			//System.out.print(outputs[i] + " ");
 		}
-		//System.out.println();
 		return outputs;
 	}
 	
@@ -240,7 +303,8 @@ public class NeuralNetwork {
 	
 	private static double getRandomWeight(){
 		//Returns a random double value between 0 and 1
-		return Math.random();
+		//return Math.random();
+		return 0.0d;
 	}
 	
 	public JSONObject getJSONObject(){

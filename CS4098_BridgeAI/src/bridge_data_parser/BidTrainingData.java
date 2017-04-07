@@ -24,7 +24,6 @@ public class BidTrainingData {
 		}
 		
 		best_contract = new Vector39(training_data.getBest_contract());
-		
 	}
 	
 	public Vector208 getInputVector(){
